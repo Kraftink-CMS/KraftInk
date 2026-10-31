@@ -1,0 +1,56 @@
+name: Prepare version
+run-name: Prepare ${{ inputs.bump }} version
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Target version to prepare
+        type: choice
+        required: true
+        options: [patch, minor, major]
+        default: minor
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    name: Prepare the next version
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    concurrency:
+      group: kraftink-release
+      cancel-in-progress: false
+      queue: max
+    permissions:
+      contents: write
+      statuses: write
+    steps:
+      - name: Validate the workflow branch
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" != refs/heads/dev ]]; then
+            echo '::error::Run this workflow from the dev branch.'
+            exit 1
+          fi
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: Kraftink-CMS/automation@master
+        id: automation
+      - name: Locate the shared source version tools
+        env:
+          AUTOMATION_ROOT: ${{ steps.automation.outputs.root }}
+        shell: bash
+        run: printf 'RELEASE_SOURCE_VERSION_MODULE=%s/scripts/releases/source-version.mjs\n' "$AUTOMATION_ROOT" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '24'
+      - name: Prepare the release target
+        env:
+          REQUESTED_BUMP: ${{ inputs.bump }}
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: node scripts/releases/target.mjs prepare --bump "$REQUESTED_BUMP"

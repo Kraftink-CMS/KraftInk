@@ -1,0 +1,88 @@
+name: Beta
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_tag:
+        description: Published alpha tag to promote, or latest-alpha
+        type: string
+        required: false
+        default: latest-alpha
+      notes_mode:
+        description: Release notes mode
+        type: choice
+        options: [auto, append, replace]
+        default: auto
+      notes:
+        description: Optional Markdown message for append or replace
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  promote:
+    name: Publish beta
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    concurrency:
+      group: kraftink-release
+      cancel-in-progress: false
+      queue: max
+    permissions:
+      contents: write
+      actions: read
+      pull-requests: read
+    steps:
+      - name: Validate the workflow branch
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" != refs/heads/dev ]]; then
+            echo '::error::Run this workflow from the dev branch.'
+            exit 1
+          fi
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: Kraftink-CMS/automation@master
+        id: automation
+      - name: Locate the shared source version tools
+        env:
+          AUTOMATION_ROOT: ${{ steps.automation.outputs.root }}
+        shell: bash
+        run: printf 'RELEASE_SOURCE_VERSION_MODULE=%s/scripts/releases/source-version.mjs\n' "$AUTOMATION_ROOT" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '24'
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962
+        with:
+          php-version: '8.5'
+          extensions: sodium, zip
+          coverage: none
+      - name: Prepare the temporary signing key
+        id: key
+        env:
+          KRAFTINK_CMS_SIGNING_PRIVATE_KEY: ${{ secrets.KRAFTINK_CMS_SIGNING_PRIVATE_KEY }}
+        shell: bash
+        run: |
+          umask 077
+          printf '%s' "$KRAFTINK_CMS_SIGNING_PRIVATE_KEY" > "$RUNNER_TEMP/kraftink-signing.key"
+          public_key=$(php scripts/releases/public-key.php)
+          printf 'public_key=%s\n' "$public_key" >> "$GITHUB_OUTPUT"
+      - name: Verify and promote the published source
+        env:
+          REQUESTED_MODE: beta
+          REQUESTED_SOURCE: ${{ inputs.source_tag }}
+          RELEASE_NOTES_MODE: ${{ inputs.notes_mode }}
+          RELEASE_NOTES: ${{ inputs.notes }}
+          GITHUB_TOKEN: ${{ github.token }}
+          KRAFTINK_CMS_SIGNING_PUBLIC_KEY: ${{ steps.key.outputs.public_key }}
+          KRAFTINK_CMS_SIGNING_PRIVATE_KEY_FILE: ${{ runner.temp }}/kraftink-signing.key
+        shell: bash
+        run: node scripts/releases/promote.mjs run --mode "$REQUESTED_MODE" --source-tag "$REQUESTED_SOURCE" --directory "$RUNNER_TEMP/kraftink-promotion"
+      - name: Remove the temporary signing key
+        if: always()
+        shell: bash
+        run: rm -f -- "$RUNNER_TEMP/kraftink-signing.key"

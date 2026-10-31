@@ -1,0 +1,131 @@
+name: Alpha
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kraftink-alpha-${{ github.ref }}
+  cancel-in-progress: false
+  queue: max
+
+jobs:
+  checks:
+    uses: ./.github/workflows/checks.yml
+
+  release:
+    name: Publish alpha
+    needs: [checks]
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    concurrency:
+      group: kraftink-release
+      cancel-in-progress: false
+      queue: max
+    permissions:
+      contents: write
+      pull-requests: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: Kraftink-CMS/automation@master
+        id: automation
+      - name: Locate the shared source version tools
+        env:
+          AUTOMATION_ROOT: ${{ steps.automation.outputs.root }}
+        shell: bash
+        run: printf 'RELEASE_SOURCE_VERSION_MODULE=%s/scripts/releases/source-version.mjs\n' "$AUTOMATION_ROOT" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '24'
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962
+        with:
+          php-version: '8.5'
+          extensions: curl, dom, fileinfo, mbstring, openssl, pdo_sqlite, sodium, tokenizer, xml, zip
+          coverage: none
+          tools: composer:v2
+      - name: Prepare the temporary signing key
+        id: key
+        env:
+          KRAFTINK_CMS_SIGNING_PRIVATE_KEY: ${{ secrets.KRAFTINK_CMS_SIGNING_PRIVATE_KEY }}
+        shell: bash
+        run: |
+          umask 077
+          printf '%s' "$KRAFTINK_CMS_SIGNING_PRIVATE_KEY" > "$RUNNER_TEMP/kraftink-signing.key"
+          public_key=$(php scripts/releases/public-key.php)
+          printf 'public_key=%s\n' "$public_key" >> "$GITHUB_OUTPUT"
+      - name: Refuse publication while a stable release pull request is open
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          KRAFTINK_CMS_SIGNING_PUBLIC_KEY: ${{ steps.key.outputs.public_key }}
+        run: node scripts/releases/publish.mjs guard
+      - name: Plan the release version from tags
+        id: version
+        shell: bash
+        run: node scripts/releases/version.mjs plan --mode alpha --branch dev --github-output | tee release-plan.json
+      - name: Inspect an existing release
+        id: published
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          KRAFTINK_CMS_SIGNING_PUBLIC_KEY: ${{ steps.key.outputs.public_key }}
+        run: node scripts/releases/publish.mjs inspect --plan release-plan.json --github-output
+      - name: Install production dependencies
+        if: steps.published.outputs.complete != 'true'
+        run: composer install --no-dev --prefer-dist --no-interaction --no-progress --no-scripts --optimize-autoloader
+      - name: Build release assets
+        if: steps.published.outputs.complete != 'true'
+        run: |
+          npm ci --no-fund
+          npm run build
+      - name: Build the distribution archive
+        if: steps.published.outputs.complete != 'true'
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          KRAFTINK_CMS_SIGNING_PUBLIC_KEY: ${{ steps.key.outputs.public_key }}
+          RELEASE_SHA: ${{ steps.version.outputs.sha }}
+        run: php scripts/releases/build-distribution.php --version="$RELEASE_VERSION" --public-key="$KRAFTINK_CMS_SIGNING_PUBLIC_KEY" --commit="$RELEASE_SHA" --output=dist > release-build.json
+      - name: Collect deleted files
+        if: steps.published.outputs.complete != 'true'
+        env:
+          RELEASE_SHA: ${{ steps.version.outputs.sha }}
+        shell: bash
+        run: php scripts/releases/deletions.php --head="$RELEASE_SHA" --output=release-deletions.json
+      - name: Sign the update
+        if: steps.published.outputs.complete != 'true'
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        shell: bash
+        run: |
+          source=$(node -p "JSON.parse(require('fs').readFileSync('release-build.json','utf8')).source")
+          php scripts/releases/sign-update.php --source="$source" --output=dist --key-file="$RUNNER_TEMP/kraftink-signing.key" --version="$RELEASE_VERSION" --delete=release-deletions.json
+      - name: Publish verified release assets
+        if: steps.published.outputs.complete != 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          KRAFTINK_CMS_SIGNING_PUBLIC_KEY: ${{ steps.key.outputs.public_key }}
+        run: node scripts/releases/publish.mjs publish --plan release-plan.json --directory dist
+      - name: Refresh the update channels
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          KRAFTINK_CMS_SIGNING_PUBLIC_KEY: ${{ steps.key.outputs.public_key }}
+        run: node scripts/releases/channels.mjs update --plan release-plan.json
+      - name: Summarize the alpha release
+        env:
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          RELEASE_SHA: ${{ steps.version.outputs.sha }}
+        shell: bash
+        run: |
+          printf '### Alpha published\n\n[%s](https://github.com/%s/releases/tag/%s)\n\nSource commit: `%s`\n\nTo freeze this alpha for testing, run **Beta** with source tag `%s`.\n' "$RELEASE_TAG" "$GITHUB_REPOSITORY" "$RELEASE_TAG" "$RELEASE_SHA" "$RELEASE_TAG" >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove the temporary signing key
+        if: always()
+        shell: bash
+        run: rm -f -- "$RUNNER_TEMP/kraftink-signing.key"
