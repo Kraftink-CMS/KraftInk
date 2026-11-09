@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\Extensions\ExtensionManager;
 use Closure;
 use Illuminate\Http\Request;
@@ -34,7 +33,7 @@ class ExtensionConfiguration
         $extension = $manager->all()[$id] ?? null;
         if (!$extension || !$manager->configurationAvailable($extension)) {
             $request->setRouteResolver(static fn () => null);
-            throw new NotFoundHttpException();
+            abort(404);
         }
     }
 }

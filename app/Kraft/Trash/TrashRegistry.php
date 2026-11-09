@@ -2,7 +2,6 @@
 
 namespace App\Kraft\Trash;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Kraft\System\TableQuery;
 use App\Models\Accounts\User;
@@ -43,7 +42,7 @@ class TrashRegistry
     {
         $definition = $this->source($source, $actor);
         if ($definition === null) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $definition->restore($actor, $item);
     }
@@ -58,7 +57,7 @@ class TrashRegistry
     {
         $definition = $this->source($source, $actor);
         if ($definition === null) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $definition->purge($actor, $item);
     }
@@ -114,7 +113,7 @@ class TrashRegistry
     {
         $sources = $this->sources($user);
         if ($source !== null && $source !== '' && !isset($sources[$source])) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         if ($source !== null && $source !== '') {
             $sources = [$source => $sources[$source]];

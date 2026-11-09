@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Appearance;
 
 use Illuminate\Support\Facades\Validator;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\System\TableQuery;
 use App\Http\Controllers\Controller;
 use App\Kraft\Audit;
@@ -28,7 +27,7 @@ class NavigationController extends Controller
         $links = NavigationLink::with('roles')->orderBy('location')->orderBy('position')->orderBy('id')->get();
         $editing = $request->filled('edit') ? $links->firstWhere('id', $request->integer('edit')) : null;
         if ($request->filled('edit') && !$editing) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $requestedLocation = $request->old('location', $editing?->location ?? $request->query('location'));
         $locationLabels = app(Navigation::class)->locations();

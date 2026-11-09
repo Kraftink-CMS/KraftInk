@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\System;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\System\TableQuery;
 use App\Models\Audit\AuditWebhookDelivery;
 use App\Http\Controllers\Controller;
@@ -140,7 +139,7 @@ class AuditWebhookController extends Controller
                 'updated_at' => now(),
             ]);
         if ($count !== 1) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $webhook->deliverAfterCommit($delivery);
 

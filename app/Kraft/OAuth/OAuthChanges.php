@@ -2,7 +2,6 @@
 
 namespace App\Kraft\OAuth;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\Accounts\ApiAccessToken;
 use App\Models\Setting;
 use App\Jobs\SendOAuthRecovery;
@@ -75,7 +74,7 @@ class OAuthChanges
         $previousEnabled = array_values(array_filter(array_keys($states), fn ($id) => $states[$id]));
         if ($operation === 'provider') {
             if (!isset($states[$proposal['provider']])) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             $states[$proposal['provider']] = false;
         }

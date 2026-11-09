@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Extensions;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Http\Controllers\Controller;
 use App\Kraft\Extensions\ExtensionManager;
 use App\Kraft\Extensions\ThemeEditor;
@@ -19,11 +18,11 @@ class ExtensionAssetController extends Controller
     ): BinaryFileResponse {
         $extension = $manager->all()[$id] ?? null;
         if (!($extension && $extension['valid']) || ($extension['market_revoked'] ?? false)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         if ($extension['type'] === 'plugin') {
             if (!$extension['enabled']) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
         }
         $allowed = array_merge(
@@ -48,12 +47,12 @@ class ExtensionAssetController extends Controller
         };
         $allowed = array_merge($allowed, $icons($extension['navigation']['admin'] ?? []));
         if (!(in_array($asset, $allowed, true) && !str_contains($asset, '..') && !str_contains($asset, '\\'))) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $root = realpath($extension['path'].'/public');
         $path = realpath($extension['path'].'/public/'.$asset);
         if (!($root && $path && str_starts_with($path, $root.DIRECTORY_SEPARATOR) && is_file($path))) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $type = match (pathinfo($asset, PATHINFO_EXTENSION)) {
             'css' => 'text/css',
@@ -67,7 +66,7 @@ class ExtensionAssetController extends Controller
             default => null,
         };
         if (!$type) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         $response = new BinaryFileResponse(

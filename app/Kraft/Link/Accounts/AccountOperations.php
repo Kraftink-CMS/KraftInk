@@ -2,7 +2,6 @@
 
 namespace App\Kraft\Link\Accounts;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Models\Accounts\ApiAccessToken;
 use App\Models\Setting;
@@ -209,7 +208,7 @@ class AccountOperations
     public function adjust(string $token, string $uuid, string $kind, array $data): array
     {
         if (!in_array($kind, ['credit', 'debit', 'set'], true)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $validator = Validator::make($data, [
             'amount_minor' => [

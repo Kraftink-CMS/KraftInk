@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Settings;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\System\TableQuery;
 use App\Models\Setting;
 use App\Models\OAuth\OAuthAccount;
@@ -164,7 +163,7 @@ class OAuthSettingsController extends Controller
             $intent['at'] > time() + 30 ||
             !is_array($intent['proposal'] ?? null)
         ) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return response($this->review($request, $intent['proposal']))->header('Cache-Control', 'no-store, private');

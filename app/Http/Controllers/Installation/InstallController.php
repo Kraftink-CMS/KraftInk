@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Installation;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\Setting;
 use App\Http\Controllers\Controller;
 use App\Kraft\Audit;
@@ -343,7 +342,7 @@ class InstallController extends Controller
     public function finish(Request $request, BundledExtensions $extensions): RedirectResponse
     {
         if (!app(Installation::class)->installed()) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $result = $request->session()->pull('installation.result');
         if (

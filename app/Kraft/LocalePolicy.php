@@ -2,7 +2,6 @@
 
 namespace App\Kraft;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Kraft\Setup\Installation;
 use App\Models\Accounts\User;
@@ -98,7 +97,7 @@ class LocalePolicy
             throw new HttpException(403);
         }
         if (!$this->valid($locale)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         if ($request->hasSession()) {
             $request->session()->put('locale', $locale);

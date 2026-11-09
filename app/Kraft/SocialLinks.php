@@ -2,7 +2,6 @@
 
 namespace App\Kraft;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\Setting;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -48,7 +47,7 @@ class SocialLinks
         $this->mutate(function (array $links) use ($id, $data, $savedId): array {
             $index = $id === null ? null : array_search($id, array_column($links, 'id'), true);
             if ($id !== null && $index === false) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             if ($id === null && count($links) >= config('social.max_links', 30)) {
                 throw ValidationException::withMessages([
@@ -76,7 +75,7 @@ class SocialLinks
     {
         $this->mutate(function (array $links) use ($id): array {
             if (!in_array($id, array_column($links, 'id'), true)) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
 
             return array_values(array_filter($links, fn ($link) => $link['id'] !== $id));
@@ -89,7 +88,7 @@ class SocialLinks
         $this->mutate(function (array $links) use ($id, $direction): array {
             $index = array_search($id, array_column($links, 'id'), true);
             if ($index === false) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             $target = $index + ($direction === 'up' ? -1 : 1);
             if (isset($links[$target])) {

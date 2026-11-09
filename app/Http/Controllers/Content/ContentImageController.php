@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Content;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Http\Controllers\Controller;
 use App\Kraft\Content\ContentImages;
 use App\Kraft\Media\Images;
@@ -36,7 +35,7 @@ class ContentImageController extends Controller
     public function show(Request $request, ContentImage $image, ContentImages $images): StreamedResponse
     {
         if (!($images->canRead($image, $request->user()) && Storage::disk('local')->exists($image->path))) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return Storage::disk('local')->response($image->path, null, [

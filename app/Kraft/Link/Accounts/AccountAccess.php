@@ -3,7 +3,6 @@
 namespace App\Kraft\Link\Accounts;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Events\AuthenticatingUser;
 use App\Kraft\Auth\AccountPolicy;
 use App\Kraft\Auth\AuthPolicy;
@@ -25,12 +24,12 @@ class AccountAccess
         $uuid = $registry->get($server->game)->normalizeUuid($uuid);
         $identity = GameIdentity::query()->where('game', $server->game)->where('uuid', $uuid)->first();
         if ($identity === null) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         /** @var User|null $user */
         $user = $identity->user()->lockForUpdate()->first();
         if ($user === null) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $this->ordinary($user);
         app(GameRegistry::class)->assertUserCanAuthenticate($user);
@@ -52,7 +51,7 @@ class AccountAccess
                 ->effectiveRoles()
                 ->contains(fn ($role) => $role->slug === 'owner' || in_array('*', $role->permissions, true))
         ) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
     }
 

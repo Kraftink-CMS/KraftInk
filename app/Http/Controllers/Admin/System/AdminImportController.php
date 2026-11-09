@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\System;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\System\TableQuery;
 use App\Models\Imports\ImportRun;
 use App\Http\Controllers\Controller;
@@ -215,7 +214,7 @@ final class AdminImportController extends Controller
         if (!empty($data['resume'])) {
             $run = ImportRun::query()->where('id', $data['resume'])->first();
             if ($run === null) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             $plan = $run->plan;
         } elseif (!$plan || !hash_equals($plan['hash'], $data['hash'] ?? '')) {
@@ -305,7 +304,7 @@ final class AdminImportController extends Controller
     {
         $run = ImportRun::query()->where('id', $id)->first();
         if ($run === null) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $plan = $run->plan;
         $report = $run->report ?? [];
@@ -344,7 +343,7 @@ final class AdminImportController extends Controller
     {
         $run = ImportRun::query()->where('id', $id)->first();
         if ($run === null) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return response()

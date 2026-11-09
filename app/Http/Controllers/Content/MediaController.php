@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Content;
 
 use Illuminate\Support\Facades\Validator;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Http\Controllers\Controller;
 use App\Kraft\Audit;
 use App\Kraft\Media\FileDeletionQueue;
@@ -165,7 +164,7 @@ class MediaController extends Controller
     public function show(MediaAsset $asset): StreamedResponse
     {
         if (!Storage::disk('local')->exists($asset->path)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return Storage::disk('local')->response($asset->path, null, [

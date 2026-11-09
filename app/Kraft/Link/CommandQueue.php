@@ -3,7 +3,6 @@
 namespace App\Kraft\Link;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\Servers\LinkCommand;
 use App\Events\AcknowledgingLinkCommand;
 use App\Events\CollectingLinkCommands;
@@ -107,7 +106,7 @@ class CommandQueue
             $event = new AcknowledgingLinkCommand($server, $id, $lease, $state, $error);
             event($event);
             if (!$event->handled) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
 
             return;
@@ -116,7 +115,7 @@ class CommandQueue
             /** @var LinkCommand|null $command */
             $command = $server->commands()->whereKey(substr($id, strlen(LinkCommand::DELIVERY_PREFIX)))->lockForUpdate()->first();
             if (!$command || !hash_equals($command->lease ?? '', $lease)) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             if (!$command->acknowledge($state, $error)) {
                 throw new HttpException(409);

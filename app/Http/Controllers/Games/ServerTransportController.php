@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Games;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Kraft\System\TableQuery;
 use App\Http\Controllers\Controller;
@@ -24,11 +23,11 @@ class ServerTransportController extends Controller
     public function index(Server $server, TransportRegistry $transports, GameRegistry $games): View
     {
         if ($server->game !== $games->activeId()) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $transport = $transports->get($server);
         if (!($transport && !empty($transport->metadata()['commands']))) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return view('admin.servers.transport.index', [
@@ -51,11 +50,11 @@ class ServerTransportController extends Controller
         GameRegistry $games,
     ): RedirectResponse {
         if ($server->game !== $games->activeId()) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $metadata = $transports->get($server)?->metadata() ?? [];
         if (empty($metadata['commands'])) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $credentials = app(TransportCredentials::class);
         ['transport_options' => $options, 'transport_secret' => $secret] = $credentials->validate(
@@ -125,7 +124,7 @@ class ServerTransportController extends Controller
     public function check(Server $server, TransportRegistry $transports, GameRegistry $games): RedirectResponse
     {
         if ($server->game !== $games->activeId()) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $transport = $transports->get($server);
         if (!($transport && !empty($transport->metadata()['status']) && !$transports->requiresSetup($server))) {

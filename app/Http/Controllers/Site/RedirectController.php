@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Site;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\System\TableQuery;
 use App\Http\Controllers\Controller;
 use App\Kraft\Audit;
@@ -94,6 +93,6 @@ class RedirectController extends Controller
 
     public function resolve(Request $request, Redirects $redirects): RedirectResponse
     {
-        return $redirects->resolve($request) ?? throw new NotFoundHttpException();
+        return $redirects->resolve($request) ?? abort(404);
     }
 }

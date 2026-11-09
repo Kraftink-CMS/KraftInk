@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Content;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\System\TableQuery;
 use App\Models\Content\ContentAnnouncement;
 use App\Http\Controllers\Controller;
@@ -113,7 +112,7 @@ class AnnouncementController extends Controller
                 'updated_at' => now(),
             ]);
         if (!$changed) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         Audit::record('content.announcement_retried', ['id' => $delivery]);
         $announcements->deliverAfterCommit($delivery);

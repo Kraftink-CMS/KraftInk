@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin\Users;
 
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\System\TableQuery;
 use App\Models\Audit\AuditEntry;
 use App\Http\Controllers\Controller;
@@ -86,7 +85,7 @@ class AdminUserController extends Controller
     private function form(Request $request, ?User $user): View
     {
         if ($user?->isServiceAccount()) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $bans = $user
             ? TableQuery::paginate(
@@ -128,7 +127,7 @@ class AdminUserController extends Controller
     public function store(Request $request, ?User $user = null): RedirectResponse
     {
         if ($user?->isServiceAccount()) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $actor = $request->user();
         if (!$user) {
@@ -206,7 +205,7 @@ class AdminUserController extends Controller
     public function action(Request $request, User $user): RedirectResponse
     {
         if ($user->isServiceAccount()) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         app(SiteDates::class)->normalize($request, ['expires_at']);
         $validator = Validator::make($request->all(), [
@@ -316,7 +315,7 @@ class AdminUserController extends Controller
         /** @var Collection<int, OAuthAccount> $accounts */
         $accounts = $user->oauthAccounts()->lockForUpdate()->get();
         if (!$accounts->contains('id', $connection)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         if (!$user->local_login_enabled && $accounts->count() <= 1) {
             throw ValidationException::withMessages(['action' => __('site.auth.security.last_connection')]);

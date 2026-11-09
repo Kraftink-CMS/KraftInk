@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Content;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Http\Controllers\Controller;
 use App\Kraft\System\TableQuery;
 use App\Models\Content\ContentAttachment;
@@ -50,7 +49,7 @@ class ContentController extends Controller
         $content = ContentEntry::published()->visibleTo($request->user())->findOrFail($entry);
         $file = ContentAttachment::query()->where('content_entry_id', $content->id)->findOrFail($attachment);
         if (!Storage::disk('local')->exists($file->path)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return Storage::disk('local')->download($file->path, $file->original_name, [

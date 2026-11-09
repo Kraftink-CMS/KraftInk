@@ -3,7 +3,6 @@
 namespace App\Kraft\Trash;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\Accounts\User;
 use Closure;
 use Illuminate\Database\Query\Builder;
@@ -51,7 +50,7 @@ final readonly class TrashSource
     public function query(User $actor): Builder
     {
         if (!$this->canView($actor)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         $query = ($this->query)($actor);
@@ -92,7 +91,7 @@ final readonly class TrashSource
     public function restore(User $actor, int|string $item): void
     {
         if (!$this->canView($actor)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         if (!$this->canRestore($actor)) {
             throw new HttpException(403);
@@ -108,7 +107,7 @@ final readonly class TrashSource
     public function purge(User $actor, int|string $item): void
     {
         if (!$this->canView($actor)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         if (!$this->canPurge($actor)) {
             throw new HttpException(403);
@@ -121,15 +120,15 @@ final readonly class TrashSource
         $identifier = (string) $item;
         if ($this->keyType === 'integer') {
             if (!preg_match('/^[1-9][0-9]*$/D', $identifier)) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             $identifier = filter_var($identifier, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
             if ($identifier === false) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
         } else {
             if (strlen($identifier) > 255 || !preg_match('/\A[^\s\/\x00-\x1F\x7F]+\z/u', $identifier)) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
         }
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Site;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Http\Controllers\Controller;
 use App\Kraft\LocalePolicy;
 use App\Kraft\Site\SiteIdentity;
@@ -22,11 +21,11 @@ class PublicFeedController extends Controller
     public function show(Request $request, string $format): Response
     {
         if (!in_array($format, ['rss', 'atom'], true)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $locale = $request->query('locale', app(LocalePolicy::class)->defaultLocale());
         if (!app(LocalePolicy::class)->valid($locale)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         app()->setLocale($locale);
         $entries = ContentEntry::published()

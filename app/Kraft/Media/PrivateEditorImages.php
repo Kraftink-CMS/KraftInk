@@ -2,7 +2,6 @@
 
 namespace App\Kraft\Media;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Models\Accounts\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -117,7 +116,7 @@ class PrivateEditorImages
                 throw new HttpException(403);
             }
             if ($this->scope->resources()->where('id', $resourceId)->lockForUpdate()->first() === null) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             $ids = $this->referenced($html);
             $images = $this->scope->images()->whereIn('id', $ids)->lockForUpdate()->get()->keyBy('id');
@@ -174,7 +173,7 @@ class PrivateEditorImages
             !$this->validPath($image) ||
             !Storage::disk('local')->exists($image->path)
         ) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return Storage::disk('local')->response($image->path, null, [
@@ -261,7 +260,7 @@ class PrivateEditorImages
                     ->lockForUpdate()
                     ->first() === null
             ) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             $ids = $this->referencedByResource($resourceId);
             $images = $this->scope->images()->whereIn('id', $ids)->orderBy('id')->lockForUpdate()->get();

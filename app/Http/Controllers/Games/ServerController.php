@@ -20,7 +20,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ServerController extends Controller
 {
@@ -69,7 +68,7 @@ class ServerController extends Controller
             $server->game !== $games->activeId() ||
             !isset($games->linkableGames()[$server->game]['connections'][$server->connection])
         ) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return $server->connection === 'kraftlink'
@@ -172,7 +171,7 @@ class ServerController extends Controller
     public function primary(Request $request, Server $server, Settings $settings): RedirectResponse
     {
         if ($server->game !== app(GameRegistry::class)->activeId()) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $remove = $request->isMethod('delete');
         if (!$remove || (int) $settings->get('servers.primary') === $server->id) {

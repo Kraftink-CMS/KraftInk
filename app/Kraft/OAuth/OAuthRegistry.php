@@ -2,7 +2,6 @@
 
 namespace App\Kraft\OAuth;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\OAuth\Contracts\OAuthAdapter;
 use App\Kraft\Secrets;
 use App\Kraft\Settings;
@@ -118,7 +117,7 @@ class OAuthRegistry
     {
         $adapter = $this->metadata($id)['adapter'] ?? null;
         if (!$adapter || !isset(config('oauth.adapters')[$adapter])) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return app(config('oauth.adapters')[$adapter]);
@@ -127,7 +126,7 @@ class OAuthRegistry
     public function driver(string $id): Provider
     {
         if (!in_array($id, $this->enabled(), true)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $configuration = [
             'client_id' => $this->settings->get('oauth.'.$id.'.client_id'),

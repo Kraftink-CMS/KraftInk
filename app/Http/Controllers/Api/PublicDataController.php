@@ -10,7 +10,6 @@ use App\Models\Content\ContentEntry;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PublicDataController extends Controller
 {
@@ -61,7 +60,7 @@ class PublicDataController extends Controller
     {
         $locale = $request->query('locale', app(LocalePolicy::class)->defaultLocale());
         if (!app(LocalePolicy::class)->valid($locale)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         app()->setLocale($locale);
     }

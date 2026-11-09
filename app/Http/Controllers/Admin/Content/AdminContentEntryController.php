@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Content;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\System\TableQuery;
 use App\Http\Controllers\Controller;
 use App\Kraft\Audit;
@@ -216,7 +215,7 @@ abstract class AdminContentEntryController extends Controller
         $this->checkKind($entry);
         $version = ContentRevision::query()->where('content_entry_id', $entry->id)->findOrFail($revision);
         if (($version->snapshot['kind'] ?? $this->kind) !== $this->kind) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $history->restore($entry, $version, $request->user());
         app(ContentPublishing::class)->dispatchDue($entry->id);
@@ -264,7 +263,7 @@ abstract class AdminContentEntryController extends Controller
         /** @var ContentAttachment $file */
         $file = $entry->attachments()->findOrFail($attachment);
         if (!Storage::disk('local')->exists($file->path)) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return Storage::disk('local')->download($file->path, $file->original_name, [
@@ -277,7 +276,7 @@ abstract class AdminContentEntryController extends Controller
     private function checkKind(?ContentEntry $entry): void
     {
         if ($entry && $entry->kind !== $this->kind) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
     }
 

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Extensions;
 
 use App\Exceptions\MarketRequestFailed;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Http\Controllers\Controller;
 use App\Kraft\Audit;
@@ -188,7 +187,7 @@ class ExtensionOperationController extends Controller
     {
         $run = $updates->status($id);
         if (!isset($run['extension_id'])) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $run['run_url'] = route('admin.extensions.operations.run', $id);
 

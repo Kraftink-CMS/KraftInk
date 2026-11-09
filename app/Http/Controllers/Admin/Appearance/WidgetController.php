@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Appearance;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\System\TableQuery;
 use App\Http\Controllers\Controller;
 use App\Kraft\Widgets\WidgetLayout;
@@ -31,10 +30,10 @@ class WidgetController extends Controller
     {
         $instance = $widget === null ? null : collect($layout->all())->firstWhere('id', $widget);
         if ($widget !== null && !$instance) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $key = $instance['widget'] ?? $request->query('widget');
-        $definition = (is_string($key) ? $widgets->get($key) : null) ?? throw new NotFoundHttpException();
+        $definition = (is_string($key) ? $widgets->get($key) : null) ?? abort(404);
 
         return view('admin.widgets.edit', [
             'instance' => $instance,

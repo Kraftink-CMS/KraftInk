@@ -2,7 +2,6 @@
 
 namespace App\Kraft\Auth;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Kraft\Audit;
 use App\Models\Accounts\ApiAccessToken;
@@ -230,7 +229,7 @@ class ServiceAccounts
             $query = $service->apiAccessTokens()->whereNull('revoked_at');
             if ($tokenId !== null) {
                 if (!(clone $query)->whereKey($tokenId)->exists()) {
-                    throw new NotFoundHttpException();
+                    abort(404);
                 }
                 $query->whereKey($tokenId);
             }

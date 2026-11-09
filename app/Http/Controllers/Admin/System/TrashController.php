@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\System;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Kraft\System\TableQuery;
 use App\Http\Controllers\Controller;
@@ -44,7 +43,7 @@ class TrashController extends Controller
 
     public function purge(Request $request, TrashRegistry $registry, string $source, string $item): RedirectResponse
     {
-        $definition = $registry->source($source, $request->user()) ?? throw new NotFoundHttpException();
+        $definition = $registry->source($source, $request->user()) ?? abort(404);
         if (!$definition->canPurge($request->user())) {
             throw new HttpException(403);
         }

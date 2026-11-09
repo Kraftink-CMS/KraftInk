@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Site;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\System\TableQuery;
 use App\Models\Setting;
 use App\Http\Controllers\Controller;
@@ -33,11 +32,11 @@ class SeoController extends Controller
         if ($editing !== null) {
             $page = $pages->firstWhere('id', $editing);
             if ($page === null) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
         } elseif ($selectedTarget !== null) {
             if (!(is_string($selectedTarget) && isset($targets[$selectedTarget]))) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             $page = $pages->firstWhere('target', $selectedTarget);
         }
@@ -169,7 +168,7 @@ class SeoController extends Controller
     {
         $page = collect($settings->get('seo.pages', []))->firstWhere('id', $rule);
         if ($page === null) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return redirect()->route('admin.seo.index', ['edit' => $page['id']]);
@@ -195,7 +194,7 @@ class SeoController extends Controller
             $pages = $settings->get('seo.pages', []);
             $existing = $rule ? collect($pages)->firstWhere('id', $rule) : null;
             if ($rule !== null && $existing === null) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             if (
                 collect($pages)->contains(
@@ -238,7 +237,7 @@ class SeoController extends Controller
             $pages = $settings->get('seo.pages', []);
             $page = collect($pages)->firstWhere('id', $rule);
             if ($page === null) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             $settings->set('seo.pages', array_values(array_filter($pages, fn ($item) => $item['id'] !== $rule)));
             Audit::record('seo.page_deleted', ['path' => $page['path']]);

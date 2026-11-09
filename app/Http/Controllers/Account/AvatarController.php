@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Account;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Http\Controllers\Controller;
 use App\Kraft\Auth\Avatars;
@@ -26,7 +25,7 @@ class AvatarController extends Controller
                 $avatars->hasStoredImage($user)
             )
         ) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return response()

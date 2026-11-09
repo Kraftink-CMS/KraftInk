@@ -2,7 +2,6 @@
 
 namespace App\Kraft\Content;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\Html;
 use App\Models\Content\ContentEntry;
 use App\Models\Content\ContentRevision;
@@ -48,7 +47,7 @@ class ContentHistory
     public function restore(ContentEntry $entry, ContentRevision $revision, User $actor): void
     {
         if ($revision->content_entry_id !== $entry->id) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         DB::transaction(function () use ($entry, $revision, $actor) {
             $entry = ContentEntry::query()->lockForUpdate()->findOrFail($entry->id);

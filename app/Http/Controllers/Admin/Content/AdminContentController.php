@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Content;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Http\Controllers\Controller;
 use App\Kraft\Audit;
 use App\Kraft\Content\ContentComments;
@@ -78,7 +77,7 @@ class AdminContentController extends Controller
             /** @var ContentCommentRevision|null $snapshot */
             $snapshot = $record->revisions()->where('id', $revision)->first();
             if ($snapshot === null) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             $record->recordRevision($request->user(), 'before_restore');
             $record->update(['body' => $comments->clean($snapshot->body), 'state' => $snapshot->state]);

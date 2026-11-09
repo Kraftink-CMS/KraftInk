@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Appearance;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Http\Controllers\Controller;
 use App\Kraft\Audit;
@@ -73,7 +72,7 @@ class ThemeConfigurationController extends Controller
     ): RedirectResponse {
         $extension = $this->theme($theme);
         if ((app(ExtensionManager::class)->activeTheme($extension['target'])['id'] ?? null) !== $theme) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $data = $this->validated($request, $extension, $configuration, $templates);
         if ($data['content_templates'] === null) {
@@ -127,7 +126,7 @@ class ThemeConfigurationController extends Controller
         $manager = app(ExtensionManager::class);
         $theme = $manager->all()[$id] ?? null;
         if (!($theme && $theme['type'] === 'theme' && $manager->configurationAvailable($theme))) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $permission = $theme['configuration']['permission'] ?? 'settings.manage';
         if (!request()->user()?->hasPermission($permission)) {

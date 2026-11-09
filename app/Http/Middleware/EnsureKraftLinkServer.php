@@ -6,7 +6,6 @@ use App\Kraft\Games\GameRegistry;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EnsureKraftLinkServer
 {
@@ -19,7 +18,7 @@ class EnsureKraftLinkServer
             $server->connection !== 'kraftlink' ||
             !isset($games->linkableGames()[$server->game]['connections']['kraftlink'])
         ) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return $next($request);

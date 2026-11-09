@@ -2,7 +2,6 @@
 
 namespace App\Kraft\Widgets;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\Setting;
 use App\Kraft\Auth\PermissionAccess;
 use App\Kraft\Extensions\ContributionRenderer;
@@ -61,7 +60,7 @@ class WidgetLayout
         $this->mutate(function (array $instances) use ($id, $savedId, $data): array {
             $index = $id === null ? false : array_search($id, array_column($instances, 'id'), true);
             if ($id !== null && $index === false) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             if ($id === null && count($instances) >= 100) {
                 throw ValidationException::withMessages(['widget' => __('widgets.limit')]);
@@ -86,7 +85,7 @@ class WidgetLayout
     {
         $this->mutate(function (array $instances) use ($id): array {
             if (!in_array($id, array_column($instances, 'id'), true)) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
 
             return array_values(array_filter($instances, fn (array $instance) => $instance['id'] !== $id));
@@ -101,7 +100,7 @@ class WidgetLayout
         $this->mutate(function (array $instances) use ($id, $direction): array {
             $index = array_search($id, array_column($instances, 'id'), true);
             if ($index === false) {
-                throw new NotFoundHttpException();
+                abort(404);
             }
             $step = $direction === 'up' ? -1 : 1;
             for ($target = $index + $step; isset($instances[$target]); $target += $step) {

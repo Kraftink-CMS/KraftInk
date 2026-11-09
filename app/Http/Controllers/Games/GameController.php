@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Games;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Http\Controllers\Controller;
 use App\Kraft\Audit;
 use App\Kraft\Extensions\ExtensionManager;
@@ -108,7 +107,7 @@ class GameController extends Controller
     public function identity(Request $request, string $game, GameRegistry $registry): RedirectResponse
     {
         if (!array_key_exists($game, $registry->accountGames())) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         app(AuthPolicy::class)->confirmCredentials($request);
         $data = $request->validate($registry->get($game)->identityRules());

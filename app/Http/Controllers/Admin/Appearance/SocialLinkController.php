@@ -11,7 +11,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SocialLinkController extends Controller
 {
@@ -20,7 +19,7 @@ class SocialLinkController extends Controller
         $links = $social->all();
         $editing = collect($links)->firstWhere('id', $request->query('edit'));
         if ($request->filled('edit') && !$editing) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return view('admin.social.index', [

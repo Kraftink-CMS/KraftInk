@@ -3,7 +3,6 @@
 namespace App\Kraft;
 
 use Illuminate\Support\Facades\Validator;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Events\CollectingSitemapEntries;
 use App\Models\Content\ContentEntry;
 use Illuminate\Http\Request;
@@ -44,7 +43,7 @@ class Sitemap
             }
         }
         if ($page !== null && $entries === []) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         $index = $page === null && $count > $size;
         $root = $index ? 'sitemapindex' : 'urlset';

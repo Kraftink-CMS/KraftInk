@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Content;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Http\Controllers\Controller;
 use App\Kraft\Content\ContentImages;
 use App\Kraft\Media\Images;
@@ -92,7 +91,7 @@ class ContentCoverController extends Controller
         $content = ContentEntry::published()->visibleTo($request->user())->with('privateCover')->findOrFail($entry);
         $image = $content->privateCover;
         if (!($image && Storage::disk('local')->exists($image->path))) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return Storage::disk('local')->response($image->path, null, [

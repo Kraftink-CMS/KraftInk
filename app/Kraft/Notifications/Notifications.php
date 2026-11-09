@@ -3,7 +3,6 @@
 namespace App\Kraft\Notifications;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\Notifications\NotificationDelivery;
 use App\Kraft\Html;
 use App\Kraft\NavigationTargets;
@@ -442,7 +441,7 @@ class Notifications
     {
         $row = $this->deliveries($owner)->where('id', $id)->first();
         if ($row === null) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
         if (!in_array($row->status, ['failed', 'uncertain'], true)) {
             throw new HttpException(409);

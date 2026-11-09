@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Kraft\Site\ViewCapabilities;
 use App\Kraft\Features;
 use Closure;
@@ -20,7 +19,7 @@ class RequireCapability
             $allowed = $capabilities->allowsNative($capability);
         }
         if (!$allowed) {
-            throw new NotFoundHttpException();
+            abort(404);
         }
 
         return $next($request);
