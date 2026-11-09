@@ -17,7 +17,8 @@ class ExtensionRequirements
     public function errors(array $extension, array $all, bool $activation): array
     {
         $errors = app(Manifest::class)->compatibilityErrors($extension);
-        if (GameSupport::declarations($extension) && !GameSupport::matches($extension, app(GameRegistry::class)->activeId())) {
+        $game = $extension['type'] === 'plugin' ? app(GameRegistry::class)->activeId() : null;
+        if (!GameSupport::matches($extension, $game)) {
             $errors[] = __('system.extensions.game_incompatible');
         }
         $constraints = app(DependencyConstraints::class);

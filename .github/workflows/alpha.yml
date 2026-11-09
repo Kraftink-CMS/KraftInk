@@ -59,9 +59,10 @@ jobs:
           KRAFTINK_CMS_SIGNING_PRIVATE_KEY: ${{ secrets.KRAFTINK_CMS_SIGNING_PRIVATE_KEY }}
         shell: bash
         run: |
+          : "${KRAFTINK_CMS_SIGNING_PRIVATE_KEY:?Add the CMS signing key to the repository secrets.}"
+          public_key=$(php scripts/releases/public-key.php)
           umask 077
           printf '%s' "$KRAFTINK_CMS_SIGNING_PRIVATE_KEY" > "$RUNNER_TEMP/kraftink-signing.key"
-          public_key=$(php scripts/releases/public-key.php)
           printf 'public_key=%s\n' "$public_key" >> "$GITHUB_OUTPUT"
       - name: Refuse publication while a stable release pull request is open
         env:

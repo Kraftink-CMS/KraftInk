@@ -88,8 +88,7 @@ class ExtensionManager
                     $revoked =
                         !$builtin &&
                         $marketSecurity->revoked($manifest + ['path' => $directory, 'builtin' => $builtin]);
-                    $gameCompatible = !GameSupport::declarations($manifest) ||
-                        GameSupport::matches($manifest, app(GameRegistry::class)->activeId());
+                    $gameCompatible = GameSupport::matches($manifest, $type === 'plugin' ? app(GameRegistry::class)->activeId() : null);
                     $active =
                         $installed &&
                         $current &&

@@ -26,7 +26,7 @@ class ExtensionCatalogue
             $purchased = $resource['commercial']['kind'] === 'paid' && ($resource['access']['allowed'] ?? null) === true;
             $allVersions = $resource['versions'];
             usort($allVersions, fn ($left, $right) => version_compare($right['version'], $left['version']));
-            $versions = array_values(array_filter($allVersions, fn ($version) => GameSupport::matches($version, $game)));
+            $versions = array_values(array_filter($allVersions, fn ($version) => GameSupport::matches($version, $game, $type)));
             if (!$versions && !$purchased) {
                 continue;
             }

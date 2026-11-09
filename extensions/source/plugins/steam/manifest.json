@@ -3,6 +3,9 @@
     "name": "Steam",
     "authors": ["nivcoo","KraftInk"],
     "type": "plugin",
+    "games": {
+        "supported": ["*"]
+    },
     "version": "1.0.0",
     "namespace": "KraftInk\\Integrations\\Steam\\",
     "provider": "KraftInk\\Integrations\\Steam\\Providers\\SteamServiceProvider",

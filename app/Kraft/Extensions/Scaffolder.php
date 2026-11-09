@@ -124,6 +124,7 @@ class Scaffolder
                 $manifest['provider'] = $namespace.'Providers\\'.$class;
                 $files['src/Providers/'.$class.'.php'] = $this->stub($type.'/provider.php', $id, $namespace);
                 if ($type === 'plugin') {
+                    $manifest['games'] = ['supported' => ['*']];
                     $permission = 'plugins.'.$id.'.manage';
                     $viewPermission = 'plugins.'.$id.'.view';
                     $manifest['permissions'] = [

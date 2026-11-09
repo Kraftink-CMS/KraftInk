@@ -4,6 +4,9 @@
     "authors": ["nivcoo", "KraftInk"],
     "description": "network::admin.description",
     "type": "plugin",
+    "games": {
+        "supported": ["*"]
+    },
     "version": "1.0.0",
     "namespace": "KraftInk\\Plugins\\Network\\",
     "provider": "KraftInk\\Plugins\\Network\\Providers\\NetworkServiceProvider",
