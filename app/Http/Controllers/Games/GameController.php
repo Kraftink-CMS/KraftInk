@@ -52,6 +52,8 @@ class GameController extends Controller
             $capabilities[$id] = [
                 'verified_profile' => [
                     'available' => (bool) array_intersect(['account_verification', 'premium_ownership'], $features),
+                    'ready' => $game['verified_profile_ready'] ?? true,
+                    'help' => $game['verified_profile_help'] ?? null,
                 ],
                 'public_profile' => [
                     'available' => $adapter instanceof ResolvesPublicProfiles,

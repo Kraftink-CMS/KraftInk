@@ -28,6 +28,7 @@ class Heartbeat implements PollHandler
             'players_online' => 'sometimes|required|integer|between:0,100000',
             'max_players' => 'required|integer|between:0,100000',
             'uptime_seconds' => 'required|integer|min:0',
+            'identity_verification' => ['sometimes', 'boolean:strict'],
             'tps' => 'nullable|array|max:3',
             'tps.*' => 'numeric|min:0|max:1000',
             'memory' => 'required|array',

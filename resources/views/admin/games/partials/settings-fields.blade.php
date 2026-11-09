@@ -1,11 +1,12 @@
 @php
     $settingsSections = collect($game['settings'])->groupBy(fn($field) => $field['section'] ?? '', preserveKeys: true);
+    $inlineSettings = $inlineSettings ?? false;
 @endphp
 @foreach ($settingsSections as $sectionId => $fields)
     @php
         $section = $game['settings_sections'][$sectionId] ?? ['title' => 'auth_flow.admin.game_settings'];
     @endphp
-    <x-admin::game-settings-card class="mb-3" :title="__($section['title'])" :game="$game['name']" :compact="true">
+    <x-admin::game-settings-card class="mb-3" :title="__($section['title'])" :game="$game['name']" :compact="true" :inline="$inlineSettings">
         @if (!empty($section['description']))
             <p class="small text-body-secondary">{{ __($section['description']) }}</p>
         @endif

@@ -50,7 +50,9 @@ class DeliveryQueue
         $commands = DB::transaction(function () use ($event, $channel, $prefix, $deliveries, $limit) {
             $server = $event->server;
             $default = (int) $this->settings->get('link.default_server', 0);
-            $records = (clone $deliveries)
+            $query = clone $deliveries;
+            app(CommandIdentity::class)->filterClaims($query, $server);
+            $records = $query
                 ->where('game', $server->game)
                 ->where('attempts', '<', self::MAX_ATTEMPTS)
                 ->where(

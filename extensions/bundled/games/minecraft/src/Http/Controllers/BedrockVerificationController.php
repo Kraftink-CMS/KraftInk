@@ -4,6 +4,7 @@ namespace KraftInk\Games\Minecraft\Http\Controllers;
 
 use App\Kraft\Auth\AuthForms;
 use App\Kraft\Auth\LoginManager;
+use App\Kraft\Games\IdentityChallenges;
 use App\Models\Accounts\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\RedirectResponse;
@@ -11,13 +12,12 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use KraftInk\Games\Minecraft\Services\Auth\BedrockChallenges;
 use KraftInk\Games\Minecraft\Services\Auth\BedrockVerificationPolicy;
 
 class BedrockVerificationController
 {
     public function __construct(
-        private readonly BedrockChallenges $challenges,
+        private readonly IdentityChallenges $challenges,
         private readonly BedrockVerificationPolicy $verification,
     ) {
     }
@@ -28,7 +28,7 @@ class BedrockVerificationController
         abort_unless($this->verification->available(), 404);
 
         $challenge = $pending['bedrock'] ?? null;
-        $status = $challenge ? $this->challenges->status($user, $challenge['nonce'], $challenge['code']) : null;
+        $status = $challenge ? $this->challenges->status($this->verification, $user, $challenge['nonce'], $challenge['code']) : null;
         $proof = $status['proof'] ?? null;
         $code = $status !== null && !$proof ? $challenge['code'] : null;
 
@@ -52,9 +52,9 @@ class BedrockVerificationController
         abort_unless($this->verification->available(), 404);
 
         $nonce = Str::random(64);
-        $challenge = $this->challenges->issue($user, $nonce, $pending['at'] + LoginManager::IDENTITY_PENDING_SECONDS);
+        $challenge = $this->challenges->issue($this->verification, $user, $nonce, $pending['at'] + LoginManager::IDENTITY_PENDING_SECONDS);
         if ($previous = $pending['bedrock'] ?? null) {
-            $this->challenges->cancel($user, $previous['nonce'], $previous['code']);
+            $this->challenges->cancel($this->verification, $user, $previous['nonce'], $previous['code']);
         }
         $request->session()->put('auth.identity_pending.bedrock', $challenge + ['nonce' => $nonce]);
 
@@ -73,7 +73,7 @@ class BedrockVerificationController
             return $redirect->withErrors(['bedrock' => __('minecraft::bedrock.challenge_changed')]);
         }
         try {
-            $confirmed = $this->challenges->confirm($user, $nonce, $challenge['code']);
+            $confirmed = $this->challenges->confirm($this->verification, $user, $nonce, $challenge['code']);
         } catch (ValidationException $exception) {
             return $redirect->withErrors($exception->errors());
         }

@@ -2,15 +2,18 @@
 
 namespace KraftInk\Games\Minecraft\Services\Auth;
 
+use App\Kraft\Games\Contracts\GameIdentityProof;
 use App\Kraft\Games\GameRegistry;
 use App\Kraft\Settings;
 use App\Models\Servers\Server;
 use Illuminate\Database\Eloquent\Builder;
 use KraftInk\Games\Minecraft\Services\Profiles\FloodgateProfiles;
 
-class BedrockVerificationPolicy
+class BedrockVerificationPolicy implements GameIdentityProof
 {
     public const string DEFAULT_COMMAND = 'link';
+
+    public const string SOURCE = 'floodgate_session';
 
     private const array COMMANDS = ['link' => '/link', 'kraftlink' => '/kraftlink link'];
 
@@ -27,6 +30,21 @@ class BedrockVerificationPolicy
             $this->settings->get('games.minecraft.authentication', 'open') === 'premium' &&
             $this->settings->get('games.minecraft.premium_bedrock', 'disabled') === 'enabled' &&
             $this->profiles->enabled();
+    }
+
+    public function game(): string
+    {
+        return 'minecraft';
+    }
+
+    public function source(): string
+    {
+        return self::SOURCE;
+    }
+
+    public function configuration(): ?string
+    {
+        return $this->enabled() ? $this->profiles->prefix() : null;
     }
 
     public function available(): bool

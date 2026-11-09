@@ -63,7 +63,7 @@
                                                     @endif
                                                 </div>
                                                 <p class="text-body-secondary small mb-0">
-                                                    {{ __('site.games.features_' . $feature . '_help') }}</p>
+                                                    {{ __($capability['help'] ?? 'site.games.features_' . $feature . '_help') }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -71,7 +71,10 @@
                             </div>
                         </section>
                         @if ($game['settings'])
-                            @include('admin.games.partials.settings-fields', ['fieldValues' => $gameFieldValues[$id] ?? []])
+                            @include('admin.games.partials.settings-fields', [
+                                'fieldValues' => $gameFieldValues[$id] ?? [],
+                                'inlineSettings' => true,
+                            ])
                         @endif
                         @if (!empty($game['has_site_access']) && $id === ($settings['games.default'] ?? array_key_first($games)))
                             <a href="{{ route('admin.settings.accounts.index') }}#connexion-inscription"

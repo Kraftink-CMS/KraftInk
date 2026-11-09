@@ -16,4 +16,11 @@ class GameServiceProvider extends ServiceProvider
             'games.link_platforms.minecraftbedrock' => ['nukkit'],
         ]);
     }
+
+    public function boot(): void
+    {
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'minecraftbedrock');
+        $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+        $this->loadRoutesFrom(__DIR__.'/../../routes/api.php');
+    }
 }

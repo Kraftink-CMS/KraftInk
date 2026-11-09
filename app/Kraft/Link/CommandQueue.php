@@ -69,9 +69,9 @@ class CommandQueue
             : [];
 
         return DB::transaction(function () use ($server, $players, $playerNames, $limit) {
-            $candidates = $server
-                ->commands()
-                ->claimable($players, $playerNames)
+            $query = $server->commands()->getQuery()->claimable($players, $playerNames);
+            app(CommandIdentity::class)->filterClaims($query, $server);
+            $candidates = $query
                 ->orderBy('created_at')
                 ->lockForUpdate()
                 ->limit($limit)

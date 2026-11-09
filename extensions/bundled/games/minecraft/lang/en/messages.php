@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'verified_profile_help' => 'Signing in with Microsoft verifies the Minecraft Java profile. Bedrock players using Floodgate can verify their account in game when configured.',
     'floodgate_section' => 'Bedrock compatibility',
     'floodgate' => 'Geyser and Floodgate players',
     'floodgate_profile_missing' => 'No public Bedrock profile matches these details.',

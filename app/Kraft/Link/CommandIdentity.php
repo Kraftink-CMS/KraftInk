@@ -2,15 +2,25 @@
 
 namespace App\Kraft\Link;
 
+use App\Kraft\Games\Contracts\FiltersLinkCommandTargets;
 use App\Kraft\Games\Contracts\GameAdapter;
 use App\Kraft\Games\Contracts\ProvidesCommandIdentity;
 use App\Kraft\Games\GameRegistry;
 use App\Models\Accounts\User;
 use App\Models\Servers\Server;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
 
 class CommandIdentity
 {
+    public function filterClaims(Builder $query, Server $server): void
+    {
+        $adapter = app(GameRegistry::class)->find($server->game);
+        if ($adapter instanceof FiltersLinkCommandTargets) {
+            $adapter->filterLinkCommandTargets($query, request()->header('X-KraftLink-Identity-Targets'));
+        }
+    }
+
     public function resolve(User $user, ?int $target, array $commands, bool $requiresOnline): array
     {
         $registry = app(GameRegistry::class);

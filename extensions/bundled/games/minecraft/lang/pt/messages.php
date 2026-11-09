@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'verified_profile_help' => 'O início de sessão com a Microsoft verifica o perfil do Minecraft Java. Os jogadores de Bedrock podem verificar a conta no jogo através do Floodgate se a opção estiver configurada.',
     'floodgate_section' => 'Compatibilidade com Bedrock',
     'floodgate' => 'Jogadores Geyser e Floodgate',
     'floodgate_profile_missing' => 'Nenhum perfil público Bedrock corresponde a estes dados.',

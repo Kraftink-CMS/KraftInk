@@ -18,7 +18,6 @@ use App\Models\Accounts\GameIdentity;
 use App\Models\Accounts\User;
 use App\Models\Servers\Server;
 use Illuminate\Validation\ValidationException;
-use KraftInk\Games\Minecraft\Services\Auth\BedrockChallenges;
 use KraftInk\Games\Minecraft\Services\Auth\BedrockVerificationPolicy;
 use KraftInk\Games\Minecraft\Services\Auth\AuthMeRegistrationPolicy;
 use KraftInk\Games\Minecraft\Services\Auth\AuthMeRegistrations;
@@ -60,6 +59,7 @@ class MinecraftAdapter implements GameAdapter, ResolvesPublicProfiles, ProvidesA
                 'online_presence',
             ],
             'account_profiles' => false,
+            'verified_profile_help' => 'minecraft::messages.verified_profile_help',
             'connection_url' => '/account/connections',
             'connection_adapter' => 'minecraft',
             'settings_sections' => [
@@ -251,7 +251,7 @@ class MinecraftAdapter implements GameAdapter, ResolvesPublicProfiles, ProvidesA
             $platform === 'bedrock' && $profiles->validName($name) && $profiles->isFloodgateUuid($uuid) &&
             $this->allowsInGameBedrock()
         ) {
-            return ['uuid' => $uuid, 'username' => $name, 'platform' => $platform, 'source' => BedrockChallenges::SOURCE];
+            return ['uuid' => $uuid, 'username' => $name, 'platform' => $platform, 'source' => BedrockVerificationPolicy::SOURCE];
         }
         if (
             $platform === 'java' && preg_match('/^[A-Za-z0-9_]{3,16}$/D', $name) === 1 &&
@@ -484,7 +484,7 @@ class MinecraftAdapter implements GameAdapter, ResolvesPublicProfiles, ProvidesA
         }
 
         return !app(FloodgateProfiles::class)->isFloodgateUuid($identity->uuid) ||
-            ($bedrock && ($identity->metadata['source'] ?? null) === BedrockChallenges::SOURCE);
+            ($bedrock && ($identity->metadata['source'] ?? null) === BedrockVerificationPolicy::SOURCE);
     }
 
     private function assertProfile(?GameIdentity $identity): void
@@ -504,7 +504,7 @@ class MinecraftAdapter implements GameAdapter, ResolvesPublicProfiles, ProvidesA
         if ($identity->verified_at && (
             $source === self::IN_GAME_JAVA_SOURCE ||
             ($source === AuthMeRegistrations::SOURCE && self::isVerifiedJavaUuid($uuid)) ||
-            ($source === BedrockChallenges::SOURCE && $profiles->enabled() && $profiles->isFloodgateUuid($uuid))
+            ($source === BedrockVerificationPolicy::SOURCE && $profiles->enabled() && $profiles->isFloodgateUuid($uuid))
         )) {
             return;
         }
