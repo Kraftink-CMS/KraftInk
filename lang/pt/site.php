@@ -468,6 +468,8 @@ return [
         'feature_unavailable' => 'Indisponível',
         'features_verified_profile' => 'Identidade verificada',
         'features_verified_profile_help' => 'Associa a conta do jogador através do serviço de início de sessão do jogo.',
+        'verification_command' => 'Comando de verificação',
+        'verification_command_help' => 'Escolhe o comando apresentado aos jogadores. Se /link não estiver disponível ou já for usado por outro plugin, escolhe /kraftlink link.',
         'features_public_profile' => 'Consulta de perfis públicos',
         'features_public_profile_help' => 'Utiliza o serviço de perfis configurado sem comprovar a propriedade da conta.',
         'features_server_status' => 'Estado e número de jogadores',

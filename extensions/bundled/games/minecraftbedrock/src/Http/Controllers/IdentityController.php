@@ -35,7 +35,7 @@ class IdentityController
 
         return response()->view('minecraftbedrock::identity', [
             'server' => $server,
-            'command' => $server && $status !== null && $proof === null ? '/kraftlink link '.$challenge['code'] : null,
+            'command' => $server && $status !== null && $proof === null ? $this->verification->command($challenge['code']) : null,
             'gamertag' => $proof['username'] ?? null,
             'nonce' => $proof === null ? null : $challenge['nonce'],
         ])->header('Cache-Control', 'private, no-store')->header('Referrer-Policy', 'no-referrer');

@@ -12,6 +12,7 @@ use App\Kraft\Games\Contracts\SupportsInGameSignIn;
 use App\Kraft\Games\Contracts\ValidatesDeclaredIdentity;
 use App\Kraft\Games\GameProfile;
 use App\Kraft\Games\GameRegistry;
+use App\Kraft\Games\IdentityVerificationCommand;
 use App\Kraft\Games\PlayerUuid;
 use App\Kraft\Settings;
 use App\Models\Accounts\GameIdentity;
@@ -161,16 +162,8 @@ class MinecraftAdapter implements GameAdapter, ResolvesPublicProfiles, ProvidesA
             'bedrock_verification_command' => [
                 'scope' => 'site_access',
                 'section' => 'access',
-                'label' => 'minecraft::messages.bedrock_verification_command',
-                'description' => 'minecraft::messages.bedrock_verification_command_help',
-                'default' => BedrockVerificationPolicy::DEFAULT_COMMAND,
-                'required' => false,
                 'when' => ['authentication' => 'premium', 'floodgate' => 'enabled', 'premium_bedrock' => 'enabled'],
-                'options' => [
-                    'link' => 'minecraft::messages.bedrock_verification_command_short',
-                    'kraftlink' => 'minecraft::messages.bedrock_verification_command_kraftlink',
-                ],
-            ],
+            ] + IdentityVerificationCommand::field(),
             'in_game_sign_in' => [
                 'scope' => 'site_access',
                 'section' => 'in_game_sign_in',

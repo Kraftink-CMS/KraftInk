@@ -4,6 +4,7 @@ namespace KraftInk\Games\MinecraftBedrock\Services;
 
 use App\Kraft\Games\Contracts\GameIdentityProof;
 use App\Kraft\Games\GameRegistry;
+use App\Kraft\Games\IdentityVerificationCommand;
 use App\Kraft\Settings;
 use App\Models\Servers\Server;
 use Illuminate\Database\Eloquent\Builder;
@@ -61,6 +62,11 @@ class IdentityVerification implements GameIdentityProof
     public function serverOptions(): array
     {
         return $this->eligibleServers()->orderBy('name')->orderBy('id')->pluck('name', 'id')->all();
+    }
+
+    public function command(string $code): string
+    {
+        return IdentityVerificationCommand::render($this->settings->get('games.minecraftbedrock.identity_verification_command'), $code);
     }
 
     private function eligibleServers(): Builder

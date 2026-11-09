@@ -4,6 +4,7 @@ namespace KraftInk\Games\Minecraft\Services\Auth;
 
 use App\Kraft\Games\Contracts\GameIdentityProof;
 use App\Kraft\Games\GameRegistry;
+use App\Kraft\Games\IdentityVerificationCommand;
 use App\Kraft\Settings;
 use App\Models\Servers\Server;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,11 +12,7 @@ use KraftInk\Games\Minecraft\Services\Profiles\FloodgateProfiles;
 
 class BedrockVerificationPolicy implements GameIdentityProof
 {
-    public const string DEFAULT_COMMAND = 'link';
-
     public const string SOURCE = 'floodgate_session';
-
-    private const array COMMANDS = ['link' => '/link', 'kraftlink' => '/kraftlink link'];
 
     public function __construct(
         private readonly Settings $settings,
@@ -64,9 +61,6 @@ class BedrockVerificationPolicy implements GameIdentityProof
 
     public function command(string $code): string
     {
-        $choice = $this->settings->get('games.minecraft.bedrock_verification_command');
-        $prefix = is_string($choice) ? self::COMMANDS[$choice] ?? null : null;
-
-        return ($prefix ?? self::COMMANDS[self::DEFAULT_COMMAND]).' '.$code;
+        return IdentityVerificationCommand::render($this->settings->get('games.minecraft.bedrock_verification_command'), $code);
     }
 }

@@ -468,6 +468,8 @@ return [
         'feature_unavailable' => 'Unavailable',
         'features_verified_profile' => 'Verified identity',
         'features_verified_profile_help' => 'Links the player\'s account through the game\'s sign-in service.',
+        'verification_command' => 'Verification command',
+        'verification_command_help' => 'Choose the command shown to players. If /link is unavailable or another plugin already uses it, choose /kraftlink link.',
         'features_public_profile' => 'Public profile lookup',
         'features_public_profile_help' => 'Uses the configured profile service without proving account ownership.',
         'features_server_status' => 'Status and player count',

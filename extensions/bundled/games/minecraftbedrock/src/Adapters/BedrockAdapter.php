@@ -8,6 +8,7 @@ use App\Kraft\Games\Contracts\ResolvesPublicProfiles;
 use App\Kraft\Games\Contracts\ValidatesDeclaredIdentity;
 use App\Kraft\Games\DeclaredGameAdapter;
 use App\Kraft\Games\GameProfile;
+use App\Kraft\Games\IdentityVerificationCommand;
 use App\Kraft\Games\PlayerUuid;
 use App\Kraft\Settings;
 use App\Models\Accounts\User;
@@ -74,6 +75,10 @@ class BedrockAdapter extends DeclaredGameAdapter implements ValidatesDeclaredIde
                 'options' => [0 => 'minecraftbedrock::messages.identity_choose_server'],
                 'options_from' => IdentityVerification::class.'@serverOptions',
             ],
+            'identity_verification_command' => [
+                'section' => 'identity',
+                'when' => ['identity_verification' => 'enabled'],
+            ] + IdentityVerificationCommand::field(),
             'public_profiles' => [
                 'section' => 'identity',
                 'label' => 'minecraftbedrock::messages.public_profiles',

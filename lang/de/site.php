@@ -468,6 +468,8 @@ return [
         'feature_unavailable' => 'Nicht verfügbar',
         'features_verified_profile' => 'Bestätigte Identität',
         'features_verified_profile_help' => 'Verknüpft das Spielerkonto über den Anmeldedienst des Spiels.',
+        'verification_command' => 'Verifizierungsbefehl',
+        'verification_command_help' => 'Wähle den Befehl, der Spielern angezeigt wird. Wenn /link nicht verfügbar oder durch ein anderes Plugin belegt ist, wähle /kraftlink link.',
         'features_public_profile' => 'Öffentliche Profilsuche',
         'features_public_profile_help' => 'Verwendet den konfigurierten Profildienst, ohne die Kontoinhaberschaft nachzuweisen.',
         'features_server_status' => 'Status und Spielerzahl',
