@@ -1,0 +1,18 @@
+{
+    "id": "garrysmod",
+    "name": "Garry's Mod",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\GarrysMod\\",
+    "provider": "KraftInk\\Games\\GarrysMod\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.3",
+        "plugin:steam": ">=0.0.1"
+    },
+    "builtin": true,
+    "description": "garrysmod::messages.description",
+    "market": {
+        "description": "garrysmod::messages.description"
+    }
+}

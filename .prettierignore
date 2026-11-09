@@ -1,0 +1,15 @@
+.work/
+vendor/
+node_modules/
+extensions/
+storage/
+bootstrap/cache/
+public/build/
+public/vendor/
+public/storage/
+resources/vendor/
+resources/fonts/
+resources/stubs/
+**/*.blade.php
+package-lock.json
+composer.lock

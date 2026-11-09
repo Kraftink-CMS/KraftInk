@@ -1,0 +1,43 @@
+{
+    "tabWidth": 4,
+    "useTabs": false,
+    "printWidth": 120,
+    "endOfLine": "lf",
+    "semi": true,
+    "singleQuote": true,
+    "quoteProps": "preserve",
+    "arrowParens": "always",
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "plugins": ["@prettier/plugin-php", "@prettier/plugin-xml", "prettier-plugin-java"],
+    "phpVersion": "8.4",
+    "braceStyle": "per-cs",
+    "overrides": [
+        {
+            "files": ["**/lang/**/*.php"],
+            "options": {
+                "printWidth": 10000
+            }
+        },
+        {
+            "files": ["*.yml", "*.yaml"],
+            "options": {
+                "tabWidth": 2
+            }
+        },
+        {
+            "files": ["*.xml"],
+            "options": {
+                "xmlWhitespaceSensitivity": "ignore",
+                "xmlSortAttributesByKey": false
+            }
+        },
+        {
+            "files": ["*.java"],
+            "options": {
+                "endOfLine": "crlf",
+                "trailingComma": "none"
+            }
+        }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "id": "conanexiles",
+    "name": "Conan Exiles",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\ConanExiles\\",
+    "provider": "KraftInk\\Games\\ConanExiles\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.4"
+    },
+    "builtin": true,
+    "description": "conanexiles::messages.description",
+    "market": {
+        "description": "conanexiles::messages.description"
+    }
+}

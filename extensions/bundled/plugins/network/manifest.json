@@ -1,0 +1,31 @@
+{
+    "id": "network",
+    "name": "Network",
+    "authors": ["nivcoo", "KraftInk"],
+    "description": "network::admin.description",
+    "type": "plugin",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Plugins\\Network\\",
+    "provider": "KraftInk\\Plugins\\Network\\Providers\\NetworkServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.4.1"
+    },
+    "builtin": true,
+    "configuration": {
+        "route": "plugins.network.admin.index",
+        "permission": "settings.manage"
+    },
+    "navigation": {
+        "admin": [
+            {
+                "label": "network::admin.title",
+                "route": "plugins.network.admin.index",
+                "permission": "settings.manage",
+                "icon": "globe",
+                "parent": "security",
+                "section": "administration"
+            }
+        ]
+    }
+}

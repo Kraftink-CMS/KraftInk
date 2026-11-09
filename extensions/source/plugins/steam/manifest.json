@@ -1,0 +1,14 @@
+{
+    "id": "steam",
+    "name": "Steam",
+    "authors": ["nivcoo","KraftInk"],
+    "type": "plugin",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Integrations\\Steam\\",
+    "provider": "KraftInk\\Integrations\\Steam\\Providers\\SteamServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.3"
+    },
+    "builtin": true
+}

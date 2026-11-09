@@ -83,7 +83,11 @@ jobs:
         run: composer install --no-dev --prefer-dist --no-interaction --no-progress --no-scripts --optimize-autoloader
       - name: Build release assets
         if: steps.published.outputs.complete != 'true'
+        env:
+          KRAFT_AUTOMATION_ROOT: ${{ steps.automation.outputs.root }}
         run: |
+          composer install --working-dir="$KRAFT_AUTOMATION_ROOT/scripts/releases/php-scoper" --no-interaction --prefer-dist --no-progress --no-scripts --no-plugins
+          npm run build:bundled
           npm ci --no-fund
           npm run build
       - name: Build the distribution archive

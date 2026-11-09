@@ -1,0 +1,38 @@
+<?php
+
+return [
+    'title' => 'Widgets',
+    'back' => 'Zurück zu den Widgets',
+    'description' => 'Gestalte die Website-Bereiche mit Blöcken der aktiven Erweiterungen.',
+    'add' => 'Widget hinzufügen',
+    'edit' => 'Widget konfigurieren',
+    'configure' => 'Konfigurieren',
+    'widget' => 'Widget',
+    'zone' => 'Bereich',
+    'position' => 'Position',
+    'width' => 'Breite auf dem Desktop',
+    'widths' => [
+        'full' => 'Ganze Zeile',
+        'half' => 'Halbe Zeile',
+        'third' => 'Drittel einer Zeile',
+    ],
+    'languages' => 'Sprachen',
+    'languages_help' => 'Lass alle Optionen deaktiviert, um das Widget in allen Website-Sprachen anzuzeigen. Die Sichtbarkeitsregeln seiner Inhalte gelten weiterhin.',
+    'enabled' => 'Dieses Widget anzeigen',
+    'saved' => 'Widget gespeichert.',
+    'deleted' => 'Widget entfernt.',
+    'delete' => 'Widget entfernen',
+    'confirm_delete' => 'Diesen Block aus dem Layout entfernen? Die Daten seiner Erweiterung bleiben erhalten.',
+    'empty' => 'Keine Widgets konfiguriert',
+    'empty_help' => 'Füge einen Block hinzu und wähle dann seinen Bereich und seine Einstellungen.',
+    'no_definitions' => 'Die aktiven Erweiterungen stellen derzeit keine Widgets bereit.',
+    'unavailable' => 'Widget nicht verfügbar',
+    'invalid_widget' => 'Der Typ eines bestehenden Widgets kann nicht geändert werden.',
+    'invalid_configuration' => 'Die Konfiguration enthält ein unbekanntes Feld.',
+    'limit' => 'Ein Layout kann höchstens 100 Widgets enthalten.',
+    'move_up' => 'Widget nach oben verschieben',
+    'move_down' => 'Widget nach unten verschieben',
+    'zones' => [
+        'home' => 'Startseite',
+    ],
+];

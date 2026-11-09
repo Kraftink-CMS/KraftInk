@@ -1,0 +1,18 @@
+{
+    "id": "counterstrike2",
+    "name": "Counter-Strike 2",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\CounterStrike2\\",
+    "provider": "KraftInk\\Games\\CounterStrike2\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.3",
+        "plugin:steam": ">=0.0.1"
+    },
+    "builtin": true,
+    "description": "counterstrike2::messages.description",
+    "market": {
+        "description": "counterstrike2::messages.description"
+    }
+}

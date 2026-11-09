@@ -1,0 +1,38 @@
+<?php
+
+return [
+    'title' => 'Widgets',
+    'back' => 'Volver a los widgets',
+    'description' => 'Organiza las zonas del sitio con los bloques que ofrecen las extensiones activas.',
+    'add' => 'Añadir un widget',
+    'edit' => 'Configurar el widget',
+    'configure' => 'Configurar',
+    'widget' => 'Widget',
+    'zone' => 'Zona',
+    'position' => 'Posición',
+    'width' => 'Anchura en escritorio',
+    'widths' => [
+        'full' => 'Fila completa',
+        'half' => 'Media fila',
+        'third' => 'Un tercio de fila',
+    ],
+    'languages' => 'Idiomas',
+    'languages_help' => 'No selecciones ninguna opción para mostrar el widget en todos los idiomas del sitio. Las reglas de visibilidad de sus contenidos siguen aplicándose.',
+    'enabled' => 'Mostrar este widget',
+    'saved' => 'Widget guardado.',
+    'deleted' => 'Widget eliminado.',
+    'delete' => 'Eliminar el widget',
+    'confirm_delete' => '¿Eliminar este bloque del diseño? Los datos de su extensión se conservarán.',
+    'empty' => 'No hay widgets configurados',
+    'empty_help' => 'Añade un bloque y elige su zona y su configuración.',
+    'no_definitions' => 'Las extensiones activas todavía no ofrecen widgets.',
+    'unavailable' => 'Widget no disponible',
+    'invalid_widget' => 'No se puede cambiar el tipo de un widget existente.',
+    'invalid_configuration' => 'La configuración contiene un campo desconocido.',
+    'limit' => 'Un diseño puede contener hasta 100 widgets.',
+    'move_up' => 'Subir el widget',
+    'move_down' => 'Bajar el widget',
+    'zones' => [
+        'home' => 'Inicio',
+    ],
+];

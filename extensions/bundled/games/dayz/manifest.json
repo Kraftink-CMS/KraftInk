@@ -1,0 +1,18 @@
+{
+    "id": "dayz",
+    "name": "DayZ",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\DayZ\\",
+    "provider": "KraftInk\\Games\\DayZ\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.3",
+        "plugin:steam": ">=0.0.1"
+    },
+    "builtin": true,
+    "description": "dayz::messages.description",
+    "market": {
+        "description": "dayz::messages.description"
+    }
+}

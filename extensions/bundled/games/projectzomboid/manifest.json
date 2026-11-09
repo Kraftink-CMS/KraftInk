@@ -1,0 +1,18 @@
+{
+    "id": "projectzomboid",
+    "name": "Project Zomboid",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\ProjectZomboid\\",
+    "provider": "KraftInk\\Games\\ProjectZomboid\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.3",
+        "plugin:steam": ">=0.0.1"
+    },
+    "builtin": true,
+    "description": "projectzomboid::messages.description",
+    "market": {
+        "description": "projectzomboid::messages.description"
+    }
+}

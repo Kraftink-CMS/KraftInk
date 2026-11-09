@@ -1,0 +1,17 @@
+{
+    "id": "palworld",
+    "name": "Palworld",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\Palworld\\",
+    "provider": "KraftInk\\Games\\Palworld\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.4"
+    },
+    "builtin": true,
+    "description": "palworld::messages.description",
+    "market": {
+        "description": "palworld::messages.description"
+    }
+}

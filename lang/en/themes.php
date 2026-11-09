@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Theme configuration: :theme',
+    'back' => 'Back to themes',
+    'none' => 'None',
+    'description' => 'Customize the sections, content and templates provided by this theme.',
+    'saved' => 'The theme configuration has been saved.',
+    'templates' => 'Page templates',
+    'native_template' => 'Default rendering',
+    'empty' => 'This theme has no additional settings.',
+    'add_item' => 'Add an item',
+    'remove_item' => 'Remove this item',
+    'move_up' => 'Move up',
+    'move_down' => 'Move down',
+    'advanced_configuration' => 'Advanced configuration',
+    'invalid_url' => 'Enter a valid HTTP or HTTPS address, or a local path.',
+    'content_templates' => 'Templates by content',
+    'content_assignments' => 'Individual assignments',
+    'content_templates_help' => 'Choose a template for individual pages or news articles.',
+    'content_entry' => 'Page or news article',
+    'template' => 'Template',
+    'preview' => 'Preview',
+    'preview_path' => 'Page to preview',
+    'preview_help' => 'Previewing the active theme is private and does not change saved settings.',
+];

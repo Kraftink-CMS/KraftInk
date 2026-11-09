@@ -1,0 +1,40 @@
+services:
+  kraftink:
+    build: .
+    ports:
+      - '127.0.0.1:${KRAFTINK_HTTP_PORT:-8080}:80'
+    volumes:
+      - kraftink:/var/www/html
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '--fail', '--silent', '--show-error', '--output', '/dev/null', 'http://127.0.0.1/up']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  db:
+    image: mariadb:11.8
+    profiles: [mariadb]
+    environment:
+      MARIADB_DATABASE: kraftink
+      MARIADB_USER: kraftink
+      MARIADB_PASSWORD_FILE: /run/secrets/mariadb_password
+      MARIADB_RANDOM_ROOT_PASSWORD: '1'
+    secrets:
+      - mariadb_password
+    volumes:
+      - mariadb:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized']
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+secrets:
+  mariadb_password:
+    environment: KRAFTINK_DB_PASSWORD
+
+volumes:
+  kraftink:
+  mariadb:

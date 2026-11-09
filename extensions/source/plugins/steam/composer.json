@@ -1,0 +1,11 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "kraftink/steam",
+    "description": "Steam integration for KraftInk",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "xpaw/steam-openid": "^4.0"
+    }
+}

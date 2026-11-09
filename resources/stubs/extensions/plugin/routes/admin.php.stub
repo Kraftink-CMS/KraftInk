@@ -1,0 +1,11 @@
+<?php
+
+use %NAMESPACE%\Http\Controllers\Admin\AdminController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('admin/plugins/%ID%')
+    ->name('plugins.%ID%.admin.')
+    ->middleware(['web', 'auth', 'permission:admin.access', 'permission:plugins.%ID%.manage'])
+    ->group(function () {
+        Route::get('/', AdminController::class)->name('dashboard.index');
+    });

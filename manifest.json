@@ -1,0 +1,84 @@
+{
+    "id": "kraftink",
+    "name": "KraftInk",
+    "authors": ["nivcoo", "KraftInk"],
+    "type": "cms",
+    "version": "0.0.1-dev",
+    "release": null,
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.4.1"
+    },
+    "update": {
+        "repository": "kraftink-cms/Kraftink",
+        "signing_key": "kraftink-cms",
+        "protected": [
+            "**/.git",
+            "**/.svn",
+            "**/.hg",
+            "**/.aws",
+            "**/.ssh",
+            "**/.agents",
+            "**/.codex",
+            "**/.work",
+            {
+                "pattern": "**/.env*",
+                "except": ["**/.env.example"]
+            },
+            "**/auth.json",
+            "**/runtime.json",
+            "**/installation.json",
+            "**/.user.ini",
+            "**/.htpasswd",
+            "**/*.sqlite",
+            "**/*.sqlite-*",
+            "**/*.sqlite3",
+            "**/*.sqlite3-*",
+            "**/*.db",
+            "**/*.db-*",
+            "**/*.db3",
+            "**/*.db3-*",
+            "**/*.log",
+            "config/local.php",
+            "config/custom.php",
+            "storage",
+            "uploads",
+            "cache",
+            "bootstrap/cache",
+            "public/editor",
+            "public/**/uploads",
+            "public/**/storage",
+            "public/**/cache",
+            {
+                "pattern": "extensions/installed",
+                "scope": "core"
+            }
+        ],
+        "preserve": [],
+        "sync": ["vendor", "public/build", "public/vendor"]
+    },
+    "bundled": {
+        "game": [
+            "minecraft",
+            "minecraftbedrock",
+            "hytale",
+            "garrysmod",
+            "rust",
+            "fivem",
+            "dayz",
+            "ark",
+            "sevendaystodie",
+            "counterstrike2",
+            "teamfortress2",
+            "unturned",
+            "projectzomboid",
+            "redm",
+            "arkascended",
+            "palworld",
+            "satisfactory",
+            "conanexiles"
+        ],
+        "plugin": ["steam", "network"],
+        "theme": []
+    }
+}

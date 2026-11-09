@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Configuração do tema: :theme',
+    'back' => 'Voltar aos temas',
+    'none' => 'Nenhum',
+    'description' => 'Personalize as secções, os conteúdos e os modelos disponibilizados por este tema.',
+    'saved' => 'A configuração do tema foi guardada.',
+    'templates' => 'Modelos de página',
+    'native_template' => 'Apresentação predefinida',
+    'empty' => 'Este tema não disponibiliza definições adicionais.',
+    'add_item' => 'Adicionar um elemento',
+    'remove_item' => 'Remover este elemento',
+    'move_up' => 'Mover para cima',
+    'move_down' => 'Mover para baixo',
+    'advanced_configuration' => 'Configuração avançada',
+    'invalid_url' => 'Introduza um endereço HTTP ou HTTPS válido, ou um caminho local.',
+    'content_templates' => 'Modelos por conteúdo',
+    'content_assignments' => 'Atribuições individuais',
+    'content_templates_help' => 'Escolha um modelo para páginas ou notícias específicas.',
+    'content_entry' => 'Página ou notícia',
+    'template' => 'Modelo',
+    'preview' => 'Pré-visualizar',
+    'preview_path' => 'Página a pré-visualizar',
+    'preview_help' => 'A pré-visualização do tema ativo é privada e não altera as definições guardadas.',
+];

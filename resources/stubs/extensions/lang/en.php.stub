@@ -1,0 +1,10 @@
+<?php
+
+return [
+    'title' => %NAME%,
+    'description' => '%DISPLAY_NAME% extension',
+    'manage' => 'Manage %DISPLAY_NAME%',
+    'view' => 'View %DISPLAY_NAME%',
+    'welcome' => 'Your extension is ready for development.',
+    'identity_unavailable' => 'This game does not support identity linking yet.',
+];

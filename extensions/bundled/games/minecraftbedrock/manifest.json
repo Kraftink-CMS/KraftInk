@@ -1,0 +1,17 @@
+{
+    "id": "minecraftbedrock",
+    "name": "Minecraft Bedrock",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\MinecraftBedrock\\",
+    "provider": "KraftInk\\Games\\MinecraftBedrock\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.4.1"
+    },
+    "builtin": true,
+    "description": "minecraftbedrock::messages.description",
+    "market": {
+        "description": "minecraftbedrock::messages.description"
+    }
+}

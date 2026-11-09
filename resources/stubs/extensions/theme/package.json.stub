@@ -1,0 +1,11 @@
+{
+    "name": "kraftink-extension",
+    "private": true,
+    "type": "module",
+    "devDependencies": {
+        "sass": "1.106.1"
+    },
+    "engines": {
+        "node": ">=22.12.0"
+    }
+}

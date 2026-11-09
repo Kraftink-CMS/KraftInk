@@ -1,0 +1,19 @@
+@use 'fonts';
+@use 'bootstrap/scss/bootstrap' with (
+    $primary: #c04f1c,
+    $body-color: #241d1a,
+    $body-bg: #faf7f3,
+    $border-radius: 0.375rem,
+    $font-family-sans-serif: (
+        'Roboto',
+        sans-serif,
+    ),
+    $enable-shadows: false
+);
+@use 'brand';
+@use 'user-avatar';
+@use 'rich-content';
+@use 'tables';
+@use 'site';
+@use 'install';
+@import 'bootstrap-icons/font/bootstrap-icons.css';

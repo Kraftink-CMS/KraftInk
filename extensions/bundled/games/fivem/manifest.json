@@ -1,0 +1,18 @@
+{
+    "id": "fivem",
+    "name": "FiveM",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\FiveM\\",
+    "provider": "KraftInk\\Games\\FiveM\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.3",
+        "plugin:steam": ">=0.0.1"
+    },
+    "builtin": true,
+    "description": "fivem::messages.description",
+    "market": {
+        "description": "fivem::messages.description"
+    }
+}

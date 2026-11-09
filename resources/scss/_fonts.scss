@@ -1,0 +1,9 @@
+@each $weight in 400, 600, 700 {
+    @font-face {
+        font-family: 'Source Sans 3';
+        font-style: normal;
+        font-weight: $weight;
+        font-display: swap;
+        src: url('@fontsource/source-sans-3/files/source-sans-3-latin-#{$weight}-normal.woff2') format('woff2');
+    }
+}

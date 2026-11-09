@@ -1,0 +1,35 @@
+@use 'fonts';
+@use 'brand';
+@use 'user-avatar';
+@use 'rich-content';
+@use 'tables';
+@use 'media-picker';
+@import '../vendor/admin-lte/css/adminlte.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+.info-box {
+    .info-box-icon {
+        flex-shrink: 0;
+    }
+
+    .info-box-content {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .info-box-text {
+        white-space: normal;
+    }
+}
+
+progress {
+    width: 100%;
+    accent-color: var(--bs-primary);
+}
+.tox-tinymce {
+    max-width: 100%;
+}
+
+.trash-item-title {
+    min-width: 16rem;
+}

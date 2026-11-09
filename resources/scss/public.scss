@@ -1,0 +1,23 @@
+@use 'fonts';
+@use 'bootstrap/scss/bootstrap' with (
+    $primary: #c04f1c,
+    $body-color: #293446,
+    $body-bg: #f3f5f8,
+    $border-color: #dfe4eb,
+    $border-radius: 0.9375rem,
+    $border-radius-sm: 0.9375rem,
+    $border-radius-lg: 0.9375rem,
+    $input-padding-y: 0.5625rem,
+    $font-family-sans-serif: (
+        'Source Sans 3',
+        sans-serif,
+    ),
+    $enable-shadows: false
+);
+@use 'brand';
+@use 'user-avatar';
+@use 'rich-content';
+@use 'tables';
+@use 'site';
+@use 'native';
+@import 'bootstrap-icons/font/bootstrap-icons.css';

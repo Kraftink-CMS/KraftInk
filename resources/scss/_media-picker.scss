@@ -1,0 +1,17 @@
+.media-picker-preview {
+    width: 5rem;
+    height: 5rem;
+}
+
+.media-picker-option {
+    min-width: 0;
+
+    &:focus-visible {
+        outline: 3px solid var(--bs-primary);
+        outline-offset: 3px;
+    }
+}
+
+[data-media-modal] .modal-body {
+    min-height: 20rem;
+}

@@ -1,0 +1,18 @@
+{
+    "id": "teamfortress2",
+    "name": "Team Fortress 2",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\TeamFortress2\\",
+    "provider": "KraftInk\\Games\\TeamFortress2\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.3",
+        "plugin:steam": ">=0.0.1"
+    },
+    "builtin": true,
+    "description": "teamfortress2::messages.description",
+    "market": {
+        "description": "teamfortress2::messages.description"
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "id": "hytale",
+    "name": "Hytale",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\Hytale\\",
+    "provider": "KraftInk\\Games\\Hytale\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.3"
+    },
+    "builtin": true,
+    "description": "hytale::messages.description",
+    "market": {
+        "description": "hytale::messages.description"
+    }
+}

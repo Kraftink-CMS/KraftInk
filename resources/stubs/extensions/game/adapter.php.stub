@@ -1,0 +1,50 @@
+<?php
+
+namespace %NAMESPACE%\Adapters;
+
+use App\Kraft\Games\Contracts\GameAdapter as GameAdapterContract;
+use App\Kraft\Settings;
+use App\Models\Accounts\GameIdentity;
+use App\Models\Accounts\User;
+use Illuminate\Validation\ValidationException;
+
+class GameAdapter implements GameAdapterContract
+{
+    public function id(): string
+    {
+        return '%ID%';
+    }
+
+    public function metadata(): array
+    {
+        return [
+            'name' => __('%ID%::messages.title'),
+            'description' => '%ID%::messages.description',
+            'capabilities' => [],
+            'connections' => [],
+        ];
+    }
+
+    public function settingsSchema(): array
+    {
+        return [];
+    }
+
+    public function identityRules(): array
+    {
+        return [];
+    }
+
+    public function normalizeUuid(string $uuid): string
+    {
+        throw ValidationException::withMessages(['uuid' => __('%ID%::messages.identity_unavailable')]);
+    }
+
+    public function assertCanAuthenticate(User $user, ?GameIdentity $identity, Settings $settings): void
+    {
+    }
+
+    public function validateSettings(User $user, array $settings, Settings $current): void
+    {
+    }
+}

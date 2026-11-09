@@ -1,0 +1,5 @@
+{!! $mailSiteName !!}
+
+@yield('content')
+
+{!! $mailFooter !!}

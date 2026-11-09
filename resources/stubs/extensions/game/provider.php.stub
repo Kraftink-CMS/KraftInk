@@ -1,0 +1,14 @@
+<?php
+
+namespace %NAMESPACE%\Providers;
+
+use %NAMESPACE%\Adapters\GameAdapter;
+use Illuminate\Support\ServiceProvider;
+
+class GameServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        config(['games.adapters.%ID%' => GameAdapter::class]);
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "id": "satisfactory",
+    "name": "Satisfactory",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\Satisfactory\\",
+    "provider": "KraftInk\\Games\\Satisfactory\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.4"
+    },
+    "builtin": true,
+    "description": "satisfactory::messages.description",
+    "market": {
+        "description": "satisfactory::messages.description"
+    }
+}

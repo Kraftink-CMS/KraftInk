@@ -1,0 +1,33 @@
+{
+    "name": "kraftink",
+    "author": "nivcoo, KraftInk",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build && node scripts/build-extensions.mjs && node scripts/copy-editor.mjs",
+        "build:bundled": "node scripts/build-bundled.mjs",
+        "dev": "vite"
+    },
+    "devDependencies": {
+        "@prettier/plugin-php": "0.26.0",
+        "@prettier/plugin-xml": "3.4.2",
+        "blade-formatter": "1.44.6",
+        "laravel-vite-plugin": "^3.1",
+        "prettier": "3.9.10",
+        "prettier-plugin-java": "2.11.0",
+        "sass": "1.106.1",
+        "vite": "8.3.5"
+    },
+    "dependencies": {
+        "@fontsource/source-sans-3": "5.3.1",
+        "bootstrap": "^5.3.8",
+        "bootstrap-icons": "1.13.2",
+        "tinymce": "8.10.0"
+    },
+    "engines": {
+        "node": ">=22.12.0"
+    },
+    "overrides": {
+        "postcss-selector-parser": "^7.1.7"
+    }
+}

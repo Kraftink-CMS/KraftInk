@@ -1,0 +1,17 @@
+{
+    "id": "arkascended",
+    "name": "ARK: Survival Ascended",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\ArkAscended\\",
+    "provider": "KraftInk\\Games\\ArkAscended\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.4"
+    },
+    "builtin": true,
+    "description": "arkascended::messages.description",
+    "market": {
+        "description": "arkascended::messages.description"
+    }
+}

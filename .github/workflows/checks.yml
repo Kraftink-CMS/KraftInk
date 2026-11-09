@@ -55,6 +55,19 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+      - name: Build bundled PHP packages
+        env:
+          KRAFT_AUTOMATION_ROOT: ${{ steps.automation.outputs.root }}
+        shell: pwsh
+        run: |
+          if ($IsWindows) {
+            $composerCommand = (Get-Command composer.bat -CommandType Application).Source
+            $composerArchive = Join-Path (Split-Path $composerCommand) 'composer'
+            $env:COMPOSER_BINARY = Join-Path $env:RUNNER_TEMP 'kraftink-composer.phar'
+            Copy-Item -LiteralPath $composerArchive -Destination $env:COMPOSER_BINARY
+          }
+          composer install --working-dir="$env:KRAFT_AUTOMATION_ROOT/scripts/releases/php-scoper" --no-interaction --prefer-dist --no-progress --no-scripts --no-plugins
+          npm run build:bundled
       - name: Install PHP dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
       - name: Prepare the application configuration
@@ -65,7 +78,7 @@ jobs:
           composer validate --strict
       - name: Check PHP syntax
         shell: bash
-        run: find app bootstrap config database extensions/bundled lang public routes updater scripts/releases -type f -name '*.php' -print0 | xargs -0 -n 1 php -l
+        run: find app bootstrap config database extensions/source extensions/bundled lang public routes updater scripts/releases -type f -name '*.php' -print0 | xargs -0 -n 1 php -l
       - name: Test core behavior
         if: hashFiles('tests/**/*Test.php') != ''
         run: php artisan test --compact --exclude-group=bundled-extensions tests

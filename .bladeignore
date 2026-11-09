@@ -1,0 +1,9 @@
+.work/**
+vendor/**
+node_modules/**
+extensions/**
+storage/**
+bootstrap/cache/**
+public/**
+resources/vendor/**
+resources/fonts/**

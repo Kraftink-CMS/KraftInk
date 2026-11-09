@@ -1,0 +1,18 @@
+{
+    "id": "unturned",
+    "name": "Unturned",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\Unturned\\",
+    "provider": "KraftInk\\Games\\Unturned\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.3",
+        "plugin:steam": ">=0.0.1"
+    },
+    "builtin": true,
+    "description": "unturned::messages.description",
+    "market": {
+        "description": "unturned::messages.description"
+    }
+}

@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Theme-Konfiguration: :theme',
+    'back' => 'Zurück zu den Themes',
+    'none' => 'Keine',
+    'description' => 'Passen Sie die Abschnitte, Inhalte und Vorlagen dieses Themes an.',
+    'saved' => 'Die Theme-Konfiguration wurde gespeichert.',
+    'templates' => 'Seitenvorlagen',
+    'native_template' => 'Standarddarstellung',
+    'empty' => 'Dieses Theme bietet keine zusätzlichen Einstellungen.',
+    'add_item' => 'Eintrag hinzufügen',
+    'remove_item' => 'Diesen Eintrag entfernen',
+    'move_up' => 'Nach oben',
+    'move_down' => 'Nach unten',
+    'advanced_configuration' => 'Erweiterte Konfiguration',
+    'invalid_url' => 'Geben Sie eine gültige HTTP- oder HTTPS-Adresse oder einen lokalen Pfad ein.',
+    'content_templates' => 'Vorlagen nach Inhalt',
+    'content_assignments' => 'Einzelne Zuordnungen',
+    'content_templates_help' => 'Wählen Sie eine Vorlage für einzelne Seiten oder Nachrichtenartikel.',
+    'content_entry' => 'Seite oder Nachrichtenartikel',
+    'template' => 'Vorlage',
+    'preview' => 'Vorschau',
+    'preview_path' => 'Seite für die Vorschau',
+    'preview_help' => 'Die Vorschau des aktiven Themes ist privat und verändert keine gespeicherten Einstellungen.',
+];

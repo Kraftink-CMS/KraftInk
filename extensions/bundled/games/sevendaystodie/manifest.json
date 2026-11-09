@@ -1,0 +1,18 @@
+{
+    "id": "sevendaystodie",
+    "name": "7 Days to Die",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\SevenDaysToDie\\",
+    "provider": "KraftInk\\Games\\SevenDaysToDie\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.3",
+        "plugin:steam": ">=0.0.1"
+    },
+    "builtin": true,
+    "description": "sevendaystodie::messages.description",
+    "market": {
+        "description": "sevendaystodie::messages.description"
+    }
+}

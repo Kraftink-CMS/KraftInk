@@ -1,0 +1,14 @@
+<?php
+
+namespace %NAMESPACE%\Http\Controllers%SUBNAMESPACE%;
+
+use Illuminate\Routing\Controller;
+use Illuminate\View\View;
+
+class %CLASS% extends Controller
+{
+    public function __invoke(): View
+    {
+        return view('%ID%::%VIEW%');
+    }
+}

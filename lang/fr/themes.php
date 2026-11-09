@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Configuration du thème : :theme',
+    'back' => 'Retour aux thèmes',
+    'none' => 'Aucun',
+    'description' => 'Personnalisez les sections, les contenus et les modèles proposés par ce thème.',
+    'saved' => 'La configuration du thème a été enregistrée.',
+    'templates' => 'Modèles de pages',
+    'native_template' => 'Rendu par défaut',
+    'empty' => 'Ce thème ne propose aucun réglage supplémentaire.',
+    'add_item' => 'Ajouter un élément',
+    'remove_item' => 'Retirer cet élément',
+    'move_up' => 'Monter',
+    'move_down' => 'Descendre',
+    'advanced_configuration' => 'Configuration avancée',
+    'invalid_url' => 'Saisissez une adresse HTTP, HTTPS ou un chemin local valide.',
+    'content_templates' => 'Modèles par contenu',
+    'content_assignments' => 'Affectations individuelles',
+    'content_templates_help' => 'Choisissez un modèle pour certaines pages ou actualités.',
+    'content_entry' => 'Page ou actualité',
+    'template' => 'Modèle',
+    'preview' => 'Prévisualiser',
+    'preview_path' => 'Page à prévisualiser',
+    'preview_help' => 'La prévisualisation du thème actif est privée et ne modifie pas les réglages enregistrés.',
+];

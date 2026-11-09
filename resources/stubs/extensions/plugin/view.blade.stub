@@ -1,0 +1,12 @@
+@extends('%LAYOUT%')
+
+@section('title', __('%ID%::messages.title'))
+
+@section('content')
+    <section class="card">
+        <div class="card-body">
+            <h1 class="h4">{{ __('%ID%::messages.title') }}</h1>
+            <p class="mb-0">{{ __('%ID%::messages.welcome') }}</p>
+        </div>
+    </section>
+@endsection

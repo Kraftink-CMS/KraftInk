@@ -1,0 +1,17 @@
+{
+    "id": "minecraft",
+    "name": "Minecraft",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\Minecraft\\",
+    "provider": "KraftInk\\Games\\Minecraft\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.3"
+    },
+    "builtin": true,
+    "description": "minecraft::messages.description",
+    "market": {
+        "description": "minecraft::messages.description"
+    }
+}

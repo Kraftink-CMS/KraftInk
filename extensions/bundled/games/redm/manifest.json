@@ -1,0 +1,17 @@
+{
+    "id": "redm",
+    "name": "RedM",
+    "type": "game",
+    "version": "1.0.0",
+    "namespace": "KraftInk\\Games\\RedM\\",
+    "provider": "KraftInk\\Games\\RedM\\Providers\\GameServiceProvider",
+    "requires": {
+        "cms": ">=0.0.1",
+        "php": "^8.4"
+    },
+    "builtin": true,
+    "description": "redm::messages.description",
+    "market": {
+        "description": "redm::messages.description"
+    }
+}

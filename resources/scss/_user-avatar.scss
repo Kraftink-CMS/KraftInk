@@ -1,0 +1,18 @@
+:root,
+[data-bs-theme='light'] {
+    --user-avatar-light-display: block;
+    --user-avatar-dark-display: none;
+}
+
+[data-bs-theme='dark'] {
+    --user-avatar-light-display: none;
+    --user-avatar-dark-display: block;
+}
+
+.user-avatar-light {
+    display: var(--user-avatar-light-display, block);
+}
+
+.user-avatar-dark {
+    display: var(--user-avatar-dark-display, none);
+}

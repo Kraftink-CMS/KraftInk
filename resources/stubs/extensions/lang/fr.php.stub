@@ -1,0 +1,10 @@
+<?php
+
+return [
+    'title' => %NAME%,
+    'description' => 'Extension %DISPLAY_NAME%',
+    'manage' => 'Gérer %DISPLAY_NAME%',
+    'view' => 'Consulter %DISPLAY_NAME%',
+    'welcome' => 'Votre extension est prête à être développée.',
+    'identity_unavailable' => 'Ce jeu ne propose pas encore de liaison d’identité.',
+];

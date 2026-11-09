@@ -1,0 +1,16 @@
+<?php
+
+namespace %NAMESPACE%\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class PluginServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', '%ID%');
+        $this->loadTranslationsFrom(__DIR__.'/../../lang', '%ID%');
+        $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+        $this->loadRoutesFrom(__DIR__.'/../../routes/admin.php');
+    }
+}

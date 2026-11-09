@@ -1,0 +1,11 @@
+<?php
+
+use %NAMESPACE%\Http\Controllers\PublicController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('plugins/%ID%')
+    ->name('plugins.%ID%.public.')
+    ->middleware(['web', 'permission:plugins.%ID%.view'])
+    ->group(function () {
+        Route::get('/', PublicController::class)->name('home.index');
+    });

@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+
+use Illuminate\Foundation\Application;
+use Symfony\Component\Console\Input\ArgvInput;
+
+define('LARAVEL_START', microtime(true));
+if (array_intersect(['queue:work', 'queue:listen', 'kraft:tasks-run'], array_slice($_SERVER['argv'] ?? [], 1)) !== []) {
+    require __DIR__.'/bootstrap/prepare.php';
+}
+
+require __DIR__.'/vendor/autoload.php';
+
+$app = require_once __DIR__.'/bootstrap/app.php';
+
+$status = $app->handleCommand(new ArgvInput());
+
+exit($status);

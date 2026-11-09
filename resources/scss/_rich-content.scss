@@ -1,0 +1,31 @@
+.prose,
+.prose pre {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-wrap: anywhere;
+    line-height: 1.75;
+}
+.prose img,
+.prose video,
+.prose iframe {
+    max-width: 100%;
+    height: auto;
+}
+.prose h2,
+.prose h3 {
+    margin-top: 1.5rem;
+}
+.prose blockquote {
+    border-inline-start: 3px solid var(--bs-border-color);
+    padding-inline-start: 1rem;
+    color: var(--bs-secondary-color);
+}
+.prose table {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+.prose td,
+.prose th {
+    border: 1px solid var(--bs-border-color);
+    padding: 0.5rem;
+}
