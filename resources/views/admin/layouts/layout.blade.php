@@ -128,7 +128,7 @@
             <div class="app-content">
                 <div class="container-fluid pb-4">
                     <div class="vstack gap-4">
-                @include('admin.layouts.partials.update-availability')
+                        @include('admin.layouts.partials.update-availability')
                         @include('partials.feedback.alerts')
                         @include('admin.layouts.partials.market-announcements')
                         <x-extensions.slot name="admin.page.before" />

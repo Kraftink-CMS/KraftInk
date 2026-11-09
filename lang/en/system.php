@@ -10,8 +10,9 @@ return [
         'title' => 'Updates',
         'progress' => 'Update progress',
         'availability' => [
-            'available' => 'Updates are available:',
-            'cms' => 'CMS :version',
+            'cms_available' => 'CMS update available',
+            'extensions_available' => 'Extension updates available',
+            'cms' => 'Version :version',
             'plugins' => 'Plugins (:count)',
             'themes' => 'Themes (:count)',
             'games' => 'Games (:count)',

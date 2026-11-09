@@ -484,6 +484,8 @@ function initializeUpdateAvailability() {
         const endpoint = new URL(banner.dataset.endpoint, window.location.href);
         const cacheKey = 'kraftink.update-availability.' + banner.dataset.cacheKey;
         const categories = ['cms', 'plugins', 'themes', 'games'];
+        const cmsNotice = banner.querySelector('[data-update-availability-notice="cms"]');
+        const extensionsNotice = banner.querySelector('[data-update-availability-notice="extensions"]');
         const skipped = new Set((banner.dataset.skip ?? '').split(','));
         const allowed = {
             cms: banner.dataset.canCms === '1',
@@ -498,7 +500,7 @@ function initializeUpdateAvailability() {
                 (category) => Number.isSafeInteger(value[category]) && value[category] >= 0 && value[category] <= 10000,
             );
         const render = (summary) => {
-            let visible = false;
+            const visible = { cms: false, extensions: false };
             categories.forEach((category) => {
                 const link = banner.querySelector('[data-update-availability-' + category + ']');
                 if (!link) {
@@ -508,14 +510,23 @@ function initializeUpdateAvailability() {
                 const available = allowed[category] && !skipped.has(category) && Boolean(value);
                 link.hidden = !available;
                 if (available) {
-                    link.textContent = link.dataset.label.replace(
+                    const label = link.dataset.label.replace(
                         category === 'cms' ? ':version' : ':count',
                         String(value),
                     );
-                    visible = true;
+                    if (link.textContent !== label) {
+                        link.textContent = label;
+                    }
+                    visible[category === 'cms' ? 'cms' : 'extensions'] = true;
                 }
             });
-            banner.hidden = !visible;
+            if (cmsNotice) {
+                cmsNotice.hidden = !visible.cms;
+            }
+            if (extensionsNotice) {
+                extensionsNotice.hidden = !visible.extensions;
+            }
+            banner.hidden = !visible.cms && !visible.extensions;
         };
         const readCache = () => {
             try {

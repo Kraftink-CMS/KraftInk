@@ -5,6 +5,7 @@ namespace App\Kraft\Updates;
 use App\Kraft\SigningKeys;
 use App\Kraft\Extensions\ExtensionManager;
 use App\Kraft\Extensions\BuiltinExtensions;
+use App\Kraft\Extensions\GameSupport;
 use App\Kraft\Extensions\InstallationReceipts;
 use App\Kraft\Extensions\Market;
 use App\Kraft\Extensions\MarketAccess;
@@ -230,7 +231,7 @@ class UpdateAvailability
                             'target' => $extensions[$id]['target'] ?? null,
                             'version' => $version['version'],
                             'requires' => $version['requirements'],
-                        ],
+                        ] + GameSupport::declarations($version),
                         $extensions,
                     );
                 } catch (Throwable) {

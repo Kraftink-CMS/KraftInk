@@ -10,8 +10,9 @@ return [
         'title' => 'Mises à jour',
         'progress' => 'Progression de la mise à jour',
         'availability' => [
-            'available' => 'Des mises à jour sont disponibles :',
-            'cms' => 'CMS :version',
+            'cms_available' => 'Mise à jour du CMS disponible',
+            'extensions_available' => 'Mises à jour des extensions disponibles',
+            'cms' => 'Version :version',
             'plugins' => 'Plugins (:count)',
             'themes' => 'Thèmes (:count)',
             'games' => 'Jeux (:count)',
