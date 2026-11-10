@@ -17,6 +17,10 @@ use JsonException;
 
 class UpdateAvailability
 {
+    public function __construct(private readonly KraftLinkUpdates $kraftLink)
+    {
+    }
+
     /**
      * @throws JsonException
      */
@@ -24,6 +28,7 @@ class UpdateAvailability
     {
         $response = [
             'cms' => null,
+            'kraftlink' => null,
             'plugins' => [],
             'themes' => [],
             'games' => [],
@@ -39,6 +44,9 @@ class UpdateAvailability
                             ? [
                                 'version' => $release['version'],
                                 'url' => route('admin.updates.index', absolute: false),
+                                ...isset($release['blocked']['version'])
+                                    ? ['blocked_version' => $release['blocked']['version']]
+                                    : [],
                             ]
                             : null,
                 ];
@@ -46,6 +54,15 @@ class UpdateAvailability
             $response['cms'] = $cms['data'];
             $response['checked_at'] = $cms['checked_at'];
             $response['refresh_after'] = min($response['refresh_after'], $cms['refresh_after']);
+            if ($this->kraftLink->canNotify()) {
+                $kraftLink = $this->kraftLinkRelease();
+                $release = $kraftLink['data'];
+                if ($release !== null && !$this->kraftLink->isIgnored($release['version'])) {
+                    $response['kraftlink'] = $release;
+                }
+                $response['checked_at'] ??= $kraftLink['checked_at'];
+                $response['refresh_after'] = min($response['refresh_after'], $kraftLink['refresh_after']);
+            }
         }
         if ($user->hasPermission('extensions.manage')) {
             $receipts = app(InstallationReceipts::class)->all();
@@ -62,6 +79,21 @@ class UpdateAvailability
         }
 
         return $response;
+    }
+
+    public function dismissKraftLink(string $version): bool
+    {
+        if (($this->kraftLinkRelease()['data']['version'] ?? null) !== $version) {
+            return false;
+        }
+        $this->kraftLink->dismiss($version);
+
+        return true;
+    }
+
+    private function kraftLinkRelease(): array
+    {
+        return $this->cached('kraftlink', [], fn () => ['data' => $this->kraftLink->fetchLatest()]);
     }
 
     private function identity(): array

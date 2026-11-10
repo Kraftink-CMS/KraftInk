@@ -578,6 +578,12 @@ Route::name('admin.')
                 Route::post('/channel', [UpdateController::class, 'channel'])
                     ->middleware(['permission:updates.manage', 'throttle:sensitive'])
                     ->name('channel');
+                Route::post('/kraftlink/preferences', [UpdateController::class, 'kraftLinkPreferences'])
+                    ->middleware(['permission:updates.manage', 'throttle:sensitive'])
+                    ->name('kraftlink.preferences');
+                Route::post('/kraftlink/dismiss', [UpdateController::class, 'dismissKraftLink'])
+                    ->middleware(['permission:updates.manage', 'throttle:sensitive'])
+                    ->name('kraftlink.dismiss');
                 Route::post('/check', [UpdateController::class, 'check'])
                     ->middleware(['permission:updates.manage', 'throttle:sensitive'])
                     ->name('check');

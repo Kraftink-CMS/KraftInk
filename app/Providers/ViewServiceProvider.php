@@ -13,6 +13,7 @@ use App\Kraft\HomeBlocks;
 use App\Kraft\Site\PublicViewContext;
 use App\Kraft\Site\Seo;
 use App\Kraft\Slider;
+use App\Kraft\Updates\KraftLinkUpdates;
 use App\Kraft\Updates\UpdateChannel;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
@@ -60,6 +61,8 @@ class ViewServiceProvider extends ServiceProvider
             $administrator = auth()->user();
             $canUpdateCms = $administrator?->hasPermission('updates.manage') ?? false;
             $canUpdateExtensions = $administrator?->hasPermission('extensions.manage') ?? false;
+            $kraftLink = app(KraftLinkUpdates::class);
+            $canUpdateKraftLink = $canUpdateCms && $kraftLink->canNotify();
             $availabilityEndpoint = null;
             $availabilityCacheKey = null;
             $availabilitySkip = '';
@@ -73,6 +76,8 @@ class ViewServiceProvider extends ServiceProvider
                             $administrator->id,
                             $canUpdateCms,
                             $canUpdateExtensions,
+                            $canUpdateKraftLink,
+                            $canUpdateKraftLink ? $kraftLink->ignoredVersion() : null,
                             config('manifest.version'),
                             PHP_VERSION,
                             app(UpdateChannel::class)->current(),
@@ -99,6 +104,7 @@ class ViewServiceProvider extends ServiceProvider
                 ),
                 'canUpdateCms' => $canUpdateCms,
                 'canUpdateExtensions' => $canUpdateExtensions,
+                'canUpdateKraftLink' => $canUpdateKraftLink,
                 'availabilityEndpoint' => $availabilityEndpoint,
                 'availabilityCacheKey' => $availabilityCacheKey,
                 'availabilitySkip' => $availabilitySkip,

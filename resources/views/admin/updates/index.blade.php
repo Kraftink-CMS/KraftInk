@@ -288,6 +288,41 @@
                     </div>
                 </form>
             </section>
+            @if ($kraftLinkUpdatesSupported ?? false)
+                <section class="card mt-4 mb-0">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="bi bi-plug me-2" aria-hidden="true"></i>{{ __('system.updates.kraftlink.title') }}
+                        </h2>
+                    </div>
+                    <form data-ajax="true" data-redirect-url="response" method="post"
+                        action="{{ route('admin.updates.kraftlink.preferences') }}">
+                        @csrf
+                        <div class="card-body">
+                            <input type="hidden" name="enabled" value="0">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" id="kraftlink_notifications_enabled" type="checkbox"
+                                    name="enabled" value="1" role="switch"
+                                    aria-describedby="kraftlink_notifications_help" @checked(old('enabled', $kraftLinkNotificationsEnabled ?? true))>
+                                <label class="form-check-label" for="kraftlink_notifications_enabled">
+                                    {{ __('system.updates.kraftlink.enabled') }}
+                                </label>
+                            </div>
+                            <p class="form-text mb-0" id="kraftlink_notifications_help">
+                                {{ __('system.updates.kraftlink.help') }}
+                            </p>
+                            @if ($kraftLinkIgnoredVersion ?? null)
+                                <p class="form-text mb-0">
+                                    {{ __('system.updates.kraftlink.ignored_version', ['version' => $kraftLinkIgnoredVersion]) }}
+                                </p>
+                            @endif
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-secondary" type="submit">{{ __('common.actions.save') }}</button>
+                        </div>
+                    </form>
+                </section>
+            @endif
         </aside>
     </div>
 @endsection

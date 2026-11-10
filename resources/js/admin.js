@@ -483,50 +483,81 @@ function initializeUpdateAvailability() {
     if (banner) {
         const endpoint = new URL(banner.dataset.endpoint, window.location.href);
         const cacheKey = 'kraftink.update-availability.' + banner.dataset.cacheKey;
-        const categories = ['cms', 'plugins', 'themes', 'games'];
+        const categories = ['cms', 'kraftlink', 'plugins', 'themes', 'games'];
         const cmsNotice = banner.querySelector('[data-update-availability-notice="cms"]');
+        const cmsBlocked = banner.querySelector('[data-update-availability-cms-blocked]');
+        const kraftLinkNotice = banner.querySelector('[data-update-availability-notice="kraftlink"]');
+        const kraftLinkReleaseLink = banner.querySelector('[data-update-availability-kraftlink-link]');
+        const dismissKraftLink = banner.querySelector('[data-update-availability-kraftlink-dismiss]');
+        const dismissError = banner.querySelector('[data-update-availability-kraftlink-error]');
         const extensionsNotice = banner.querySelector('[data-update-availability-notice="extensions"]');
         const skipped = new Set((banner.dataset.skip ?? '').split(','));
         const allowed = {
             cms: banner.dataset.canCms === '1',
+            kraftlink: banner.dataset.canKraftlink === '1',
             plugins: banner.dataset.canExtensions === '1',
             themes: banner.dataset.canExtensions === '1',
             games: banner.dataset.canExtensions === '1',
         };
+        let currentSummary = null;
+        let dismissedKraftLinkVersion = null;
+        const validVersion = (version) => typeof version === 'string' && version.length > 0 && version.length <= 80;
         const validSummary = (value) =>
             value &&
-            (value.cms === null || (typeof value.cms === 'string' && value.cms.length > 0 && value.cms.length <= 80)) &&
+            (value.cms === null || validVersion(value.cms)) &&
+            (value.cmsBlockedVersion === undefined || (value.cms !== null && validVersion(value.cmsBlockedVersion))) &&
+            (value.kraftlink === undefined || validVersion(value.kraftlink)) &&
             ['plugins', 'themes', 'games'].every(
                 (category) => Number.isSafeInteger(value[category]) && value[category] >= 0 && value[category] <= 10000,
             );
         const render = (summary) => {
-            const visible = { cms: false, extensions: false };
+            currentSummary = summary;
+            const visible = { cms: false, kraftlink: false, extensions: false };
             categories.forEach((category) => {
-                const link = banner.querySelector('[data-update-availability-' + category + ']');
-                if (!link) {
+                const item = banner.querySelector('[data-update-availability-' + category + ']');
+                if (!item) {
                     return;
                 }
                 const value = summary?.[category];
-                const available = allowed[category] && !skipped.has(category) && Boolean(value);
-                link.hidden = !available;
+                const available =
+                    allowed[category] &&
+                    !skipped.has(category) &&
+                    Boolean(value) &&
+                    (category !== 'kraftlink' || value !== dismissedKraftLinkVersion);
+                item.hidden = !available;
                 if (available) {
-                    const label = link.dataset.label.replace(
-                        category === 'cms' ? ':version' : ':count',
-                        String(value),
-                    );
-                    if (link.textContent !== label) {
-                        link.textContent = label;
+                    const notice = category in visible ? category : 'extensions';
+                    const label = item.dataset.label.replace(notice === 'extensions' ? ':count' : ':version', value);
+                    if (item.textContent !== label) {
+                        item.textContent = label;
                     }
-                    visible[category === 'cms' ? 'cms' : 'extensions'] = true;
+                    visible[notice] = true;
                 }
             });
             if (cmsNotice) {
                 cmsNotice.hidden = !visible.cms;
             }
+            if (cmsBlocked) {
+                const version = visible.cms ? summary?.cmsBlockedVersion : null;
+                cmsBlocked.hidden = !version;
+                if (version) {
+                    const label = cmsBlocked.dataset.label.replace(':version', version);
+                    if (cmsBlocked.textContent !== label) {
+                        cmsBlocked.textContent = label;
+                    }
+                }
+            }
             if (extensionsNotice) {
                 extensionsNotice.hidden = !visible.extensions;
             }
-            banner.hidden = !visible.cms && !visible.extensions;
+            if (kraftLinkNotice) {
+                kraftLinkNotice.hidden = !visible.kraftlink;
+                if (visible.kraftlink && kraftLinkReleaseLink) {
+                    kraftLinkReleaseLink.href =
+                        kraftLinkReleaseLink.dataset.releaseBase + encodeURIComponent(summary.kraftlink);
+                }
+            }
+            banner.hidden = !Object.values(visible).some(Boolean);
         };
         const readCache = () => {
             try {
@@ -607,6 +638,12 @@ function initializeUpdateAvailability() {
                 }
                 const summary = {
                     cms: allowed.cms ? (data.cms === null ? null : data.cms?.version) : null,
+                    ...(allowed.cms && validVersion(data.cms?.blocked_version)
+                        ? { cmsBlockedVersion: data.cms.blocked_version }
+                        : {}),
+                    ...(allowed.kraftlink && validVersion(data.kraftlink?.version)
+                        ? { kraftlink: data.kraftlink.version }
+                        : {}),
                     plugins: allowed.plugins ? data.plugins.length : 0,
                     themes: allowed.themes ? data.themes.length : 0,
                     games: allowed.games ? data.games.length : 0,
@@ -629,6 +666,54 @@ function initializeUpdateAvailability() {
                 scheduleRefresh(nextCheck * 1000);
             }
         };
+        dismissKraftLink?.addEventListener('click', async () => {
+            const version = currentSummary?.kraftlink;
+            const token = document.querySelector('meta[name="csrf-token"]')?.content;
+            const dismissEndpoint = new URL(dismissKraftLink.dataset.endpoint, window.location.href);
+            if (!allowed.kraftlink || !version || !token || dismissEndpoint.origin !== window.location.origin) {
+                return;
+            }
+            const controller = new AbortController();
+            const timeout = window.setTimeout(() => controller.abort(), 8000);
+            dismissKraftLink.disabled = true;
+            dismissError.hidden = true;
+            try {
+                const response = await fetch(dismissEndpoint.href, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({ version }),
+                    signal: controller.signal,
+                });
+                if (response.status === 409 || response.status === 403) {
+                    try {
+                        window.sessionStorage.removeItem(cacheKey);
+                    } catch {}
+                    await refresh();
+                    return;
+                }
+                if (!response.ok || (await response.json()).success !== true) {
+                    throw new Error('KraftLink notification could not be dismissed.');
+                }
+                dismissedKraftLinkVersion = version;
+                if (currentSummary?.kraftlink === version) {
+                    const { kraftlink, ...summary } = currentSummary;
+                    saveCache(summary, 60);
+                    render(summary);
+                }
+            } catch {
+                dismissError.textContent = dismissKraftLink.dataset.error;
+                dismissError.hidden = false;
+            } finally {
+                window.clearTimeout(timeout);
+                dismissKraftLink.disabled = false;
+            }
+        });
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 window.clearTimeout(refreshTimer);

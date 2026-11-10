@@ -9,6 +9,7 @@ use App\Kraft\Audit;
 use App\Kraft\Settings;
 use App\Kraft\System\SensitiveAction;
 use App\Kraft\Updates\GitHubReleaseRepository;
+use App\Kraft\Updates\KraftLinkUpdates;
 use App\Kraft\Updates\UpdateManager;
 use App\Kraft\Updates\UpdateLabels;
 use App\Kraft\Updates\UpdateAvailability;
@@ -24,7 +25,7 @@ use App\Kraft\Updates\UpdateChannel;
 
 class UpdateController extends Controller
 {
-    public function index(): View
+    public function index(KraftLinkUpdates $kraftLink): View
     {
         $path = storage_path('app/updates');
         $journals = glob($path.'/*/journal.json') ?: [];
@@ -70,6 +71,9 @@ class UpdateController extends Controller
             'release' => app(GitHubReleaseRepository::class)->snapshot(),
             'updateChannel' => app(UpdateChannel::class)->current(),
             'versionChannel' => ReleaseVersion::channel(config('manifest.version')) ?? 'development',
+            'kraftLinkUpdatesSupported' => $kraftLink->supportsActiveGame(),
+            'kraftLinkNotificationsEnabled' => $kraftLink->enabled(),
+            'kraftLinkIgnoredVersion' => $kraftLink->ignoredVersion(),
         ]);
     }
 
@@ -92,6 +96,28 @@ class UpdateController extends Controller
         $settings->set('updates.channel', $data['channel']);
 
         return back()->with('status', __('system.updates.channel_saved'));
+    }
+
+    public function kraftLinkPreferences(Request $request, KraftLinkUpdates $kraftLink): RedirectResponse
+    {
+        abort_unless($kraftLink->supportsActiveGame(), 403);
+        $data = $request->validate(['enabled' => 'required|boolean']);
+        $kraftLink->setEnabled((bool) $data['enabled']);
+
+        return back()->with('status', __('system.updates.kraftlink.saved'));
+    }
+
+    public function dismissKraftLink(
+        Request $request,
+        KraftLinkUpdates $kraftLink,
+        UpdateAvailability $availability,
+    ): JsonResponse {
+        abort_unless($kraftLink->canNotify(), 403);
+        $data = $request->validate(['version' => 'required|string|max:40']);
+        abort_unless(ReleaseVersion::channel($data['version']) === 'stable', 422);
+        abort_unless($availability->dismissKraftLink($data['version']), 409);
+
+        return response()->json(['success' => true]);
     }
 
     public function check(GitHubReleaseRepository $repository): RedirectResponse
