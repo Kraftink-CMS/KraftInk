@@ -10,12 +10,11 @@
         $releaseChannel = $release['channel'] ?? ReleaseVersion::channel($release['version'] ?? null);
         $channelColors = ['stable' => 'success', 'beta' => 'warning', 'alpha' => 'danger'];
         $releaseState = $release['state'] ?? 'unchecked';
-        $releaseColor =
-            ['available' => 'primary', 'current' => 'success', 'incompatible' => 'warning'][$releaseState] ?? 'info';
-        $releaseIcon =
-            ['available' => 'download', 'current' => 'check-circle', 'incompatible' => 'exclamation-triangle'][
-                $releaseState
-            ] ?? 'cloud-arrow-down';
+        $releaseColor = ['available' => 'primary', 'current' => 'success'][$releaseState] ?? 'info';
+        $releaseIcon = ['available' => 'download', 'current' => 'check-circle'][$releaseState] ?? 'cloud-arrow-down';
+        $noCompatibleUpdate = $releaseState === 'incompatible';
+        $blockedRelease = $noCompatibleUpdate ? $release : $release['blocked'] ?? null;
+        $requirementNames = ['cms' => 'KraftInk', 'php' => 'PHP'];
         $showArchive = old('_update_source') === 'archive' && $errors->any();
         $checkedAt = $release['checked_at'] ?? null;
     @endphp
@@ -73,7 +72,7 @@
                         <div class="row align-items-center g-3">
                             <div class="col-12 col-sm">
                                 <h2 class="h5 mb-0">{{ __('system.updates.official_release') }}</h2>
-                                @if ($releaseState !== 'unchecked')
+                                @if ($releaseState !== 'unchecked' && !$noCompatibleUpdate)
                                     <p class="text-body-secondary mb-0 mt-2">
                                         <i class="bi bi-{{ $releaseIcon }} text-{{ $releaseColor }} me-1"
                                             aria-hidden="true"></i>{{ __('system.updates.remote_state.' . $releaseState, ['version' => $release['version'] ?? '']) }}
@@ -83,16 +82,16 @@
                                         @endif
                                     </p>
                                 @endif
-                                @if (isset($release['release_url']))
+                                @if (!$noCompatibleUpdate && isset($release['release_url']))
                                     <a class="d-inline-block mt-2 small" href="{{ $release['release_url'] }}"
                                         target="_blank" rel="noopener noreferrer">
-                                        {{ __('system.updates.release_notes') }}<i class="bi bi-box-arrow-up-right ms-1"
-                                            aria-hidden="true"></i>
+                                        {{ __('system.updates.release_notes', ['version' => $release['version']]) }}<i
+                                            class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i>
                                     </a>
                                 @endif
                             </div>
-                            <form data-ajax="true" data-redirect-url="response" class="col-12 col-sm-auto" method="post" action="{{ route('admin.updates.check') }}"
-                                data-update-check>
+                            <form data-ajax="true" data-redirect-url="response" class="col-12 col-sm-auto" method="post"
+                                action="{{ route('admin.updates.check') }}" data-update-check>
                                 @csrf
                                 <button class="btn btn-outline-primary btn-sm w-100" type="submit">
                                     <i class="bi bi-arrow-clockwise me-1"
@@ -100,26 +99,64 @@
                                 </button>
                             </form>
                         </div>
-                    </div>
-                    @if ($releaseState === 'available')
-                        <form method="post" action="{{ route('admin.updates.prepare') }}" data-update-prepare>
-                            <div class="card-body border-top">
+                        @if ($releaseState === 'available')
+                            <form class="mt-3" method="post" action="{{ route('admin.updates.prepare') }}"
+                                data-update-prepare>
                                 @csrf
                                 <input type="hidden" name="version" value="{{ $release['version'] }}">
                                 <input type="hidden" data-sensitive-confirmation data-sensitive-password-field="password">
-                                <p class="alert alert-danger mt-3" data-update-error role="alert" hidden></p>
-                                <p class="small text-body-secondary mt-3">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="bi bi-download me-1"
+                                        aria-hidden="true"></i>{{ __('system.updates.update_now', ['version' => $release['version']]) }}
+                                </button>
+                                <p class="alert alert-danger mt-3 mb-0" data-update-error role="alert" hidden></p>
+                                <p class="small text-body-secondary mt-2 mb-0">
                                     <i class="bi bi-shield-check me-1"
                                         aria-hidden="true"></i>{{ __('system.updates.install_help') }}
                                 </p>
+                            </form>
+                        @endif
+                    </div>
+                    @if ($blockedRelease)
+                        <section id="update-release-prerequisites" @class([
+                            'card-body pt-0' => $noCompatibleUpdate,
+                            'card-footer py-3' => !$noCompatibleUpdate,
+                        ])
+                            aria-labelledby="update-release-prerequisites-title">
+                            <div @class([
+                                'd-flex align-items-start gap-2',
+                                'alert alert-warning py-2 mb-0' => $noCompatibleUpdate,
+                            ])>
+                                <i @class([
+                                    'bi',
+                                    'bi-exclamation-triangle' => $noCompatibleUpdate,
+                                    'bi-info-circle text-body-secondary' => !$noCompatibleUpdate,
+                                ]) aria-hidden="true"></i>
+                                <div>
+                                    <h3 class="fs-6 fw-semibold mb-1" id="update-release-prerequisites-title">
+                                        {{ __($noCompatibleUpdate ? 'system.updates.remote_state.incompatible' : 'system.updates.newer_release_requirements', ['version' => $blockedRelease['version']]) }}
+                                    </h3>
+                                    @foreach ($blockedRelease['unmet'] ?? [] as $name => $requirement)
+                                        <p class="small mb-0">
+                                            {{ __('system.updates.unmet_requirement', ['name' => $requirementNames[$name], 'required' => $requirement['required'], 'current' => $requirement['current']]) }}
+                                        </p>
+                                    @endforeach
+                                    @if ($noCompatibleUpdate)
+                                        <p class="small mt-1 mb-0">{{ __('system.updates.no_compatible_release') }}</p>
+                                    @endif
+                                    @if (isset($blockedRelease['release_url']))
+                                        <a @class([
+                                            'd-inline-block small mt-1',
+                                            'alert-link' => $noCompatibleUpdate,
+                                        ]) href="{{ $blockedRelease['release_url'] }}"
+                                            target="_blank" rel="noopener noreferrer">
+                                            {{ __('system.updates.release_notes', ['version' => $blockedRelease['version']]) }}<i
+                                                class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i>
+                                        </a>
+                                    @endif
+                                </div>
                             </div>
-                            <div class="card-footer d-flex flex-wrap gap-2">
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="bi bi-download me-1"
-                                        aria-hidden="true"></i>{{ __('system.updates.update_now') }}
-                                </button>
-                            </div>
-                        </form>
+                        </section>
                     @endif
                 </section>
                 <section class="card mb-0">

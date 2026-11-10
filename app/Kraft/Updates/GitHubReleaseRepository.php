@@ -5,6 +5,7 @@ namespace App\Kraft\Updates;
 use App\Kraft\SigningKeys;
 use Composer\Semver\Semver;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -61,23 +62,48 @@ class GitHubReleaseRepository
         if (!$refresh && ($cached = Cache::get($this->cacheKey()))) {
             return $cached;
         }
-        if (($indexed = $this->checkChannels()) !== null) {
-            return $this->remember($indexed);
-        }
-        if (app(UpdateChannel::class)->current() !== 'stable') {
-            return $this->checkPrereleases();
-        }
-        $repository = $this->repository();
-        $response = $this->request('https://api.github.com/repos/'.$repository.'/releases/latest', true);
-        if ($response->status() === 404) {
-            return $this->remember(['state' => 'unpublished', 'checked_at' => now()->toIso8601String()]);
-        }
-        $release = json_decode($this->bytes($response, 1048576), true, 32, JSON_THROW_ON_ERROR);
+        $previousDeadline = $this->deadline;
+        $this->deadline ??= microtime(true) + 20;
+        try {
+            $verified = $this->checkChannels();
+            if ($verified === [] && app(UpdateChannel::class)->current() === 'stable') {
+                $latest = $this->latestStable();
+                if ($latest === null) {
+                    return $this->remember(['state' => 'unpublished', 'checked_at' => now()->toIso8601String()]);
+                }
+                $verified[$latest['tag_name']] = $this->release($latest);
+            }
 
-        return $this->remember($this->release($release));
+            $selected = $this->select($verified);
+            if ($selected === null || $selected['state'] === 'incompatible' || isset($selected['blocked'])) {
+                $selected = $this->checkHistory($verified, $selected);
+            }
+
+            return $this->remember($selected ?? ['state' => 'unpublished', 'checked_at' => now()->toIso8601String()]);
+        } finally {
+            $this->deadline = $previousDeadline;
+        }
     }
 
-    private function checkChannels(): ?array
+    private function latestStable(): ?array
+    {
+        $response = $this->request('https://api.github.com/repos/'.$this->repository().'/releases/latest', true);
+        if ($response->status() === 404) {
+            return null;
+        }
+        $release = json_decode($this->bytes($response, 1048576), true, 32, JSON_THROW_ON_ERROR);
+        if (
+            !is_array($release) ||
+            !is_string($release['tag_name'] ?? null) ||
+            ReleaseVersion::channel(preg_replace('/^v/', '', $release['tag_name'])) !== 'stable'
+        ) {
+            throw new RuntimeException('Invalid stable CMS release.');
+        }
+
+        return $release;
+    }
+
+    private function checkChannels(): array
     {
         try {
             $repository = $this->repository();
@@ -86,7 +112,7 @@ class GitHubReleaseRepository
                 true,
             );
             if ($response->status() === 404) {
-                return null;
+                return [];
             }
             $index = json_decode($this->bytes($response, 4096), true, 8, JSON_THROW_ON_ERROR);
             if (
@@ -113,7 +139,7 @@ class GitHubReleaseRepository
                 }
             }
             if (!array_key_exists($channels->current(), $index['channels'])) {
-                return null;
+                return [];
             }
             usort($tags, fn ($left, $right) => version_compare(substr($right, 1), substr($left, 1)));
             $verified = [];
@@ -126,45 +152,35 @@ class GitHubReleaseRepository
                 if (!is_array($release) || ($release['tag_name'] ?? null) !== $tag) {
                     throw new RuntimeException('The CMS release channel points to another tag.');
                 }
-                $result = $this->release($release);
-                if ($channels->current() !== 'alpha' && $result['state'] !== 'current') {
-                    return $result;
+                $verified[$tag] = $this->release($release);
+                if ($channels->current() !== 'alpha' && $verified[$tag]['state'] === 'available') {
+                    break;
                 }
-                $verified[] = $result;
             }
 
-            return $this->select($verified);
+            return $verified;
         } catch (Throwable $exception) {
             report($exception);
         }
 
-        return null;
+        return [];
     }
 
-    private function checkPrereleases(): array
+    private function checkHistory(array $verified, ?array $selected): ?array
     {
         $candidates = [];
         $failure = null;
-        try {
-            $response = $this->request(
-                'https://api.github.com/repos/'.$this->repository().'/releases/latest',
-                true,
-            );
-            if ($response->status() !== 404) {
-                $stable = json_decode($this->bytes($response, 1048576), true, 32, JSON_THROW_ON_ERROR);
-                if (
-                    !is_array($stable) ||
-                    !is_string($stable['tag_name'] ?? null) ||
-                    ReleaseVersion::channel(preg_replace('/^v/', '', $stable['tag_name'])) !== 'stable'
-                ) {
-                    throw new RuntimeException('Invalid stable CMS release.');
+        if ($verified === []) {
+            try {
+                if (($stable = $this->latestStable()) !== null) {
+                    $candidates[$stable['tag_name']] = $stable;
                 }
-                $candidates[$stable['tag_name']] = $stable;
+            } catch (Throwable $exception) {
+                $failure = $exception;
+                report($exception);
             }
-        } catch (Throwable $exception) {
-            $failure = $exception;
-            report($exception);
         }
+        $channels = app(UpdateChannel::class);
         for ($page = 1; $page <= 10; $page++) {
             $response = $this->request(
                 'https://api.github.com/repos/'.$this->repository().'/releases?per_page=100&page='.$page,
@@ -190,7 +206,7 @@ class GitHubReleaseRepository
                 $channel = ReleaseVersion::channel($version);
                 if (
                     $channel !== null &&
-                    app(UpdateChannel::class)->allows($channel) &&
+                    $channels->allows($channel) &&
                     ($release['prerelease'] ?? null) === ($channel !== 'stable')
                 ) {
                     $candidates[$release['tag_name']] = $release;
@@ -200,75 +216,76 @@ class GitHubReleaseRepository
                 break;
             }
         }
-        usort(
+        uksort(
             $candidates,
-            fn ($left, $right) => version_compare(
-                preg_replace('/^v/', '', $right['tag_name']),
-                preg_replace('/^v/', '', $left['tag_name']),
-            ),
+            fn ($left, $right) => version_compare(preg_replace('/^v/', '', $right), preg_replace('/^v/', '', $left)),
         );
-        $current = null;
-        $verified = [];
-        $alpha = app(UpdateChannel::class)->current() === 'alpha';
-        foreach ($candidates as $release) {
-            if ($this->deadline !== null && microtime(true) >= $this->deadline) {
+        $alpha = $channels->current() === 'alpha';
+        $installed = config('manifest.version');
+        $bestRank = ($selected['state'] ?? null) === 'available' ? $this->rank($selected, $alpha) : null;
+        foreach ($candidates as $tag => $release) {
+            $version = preg_replace('/^v/', '', $tag);
+            if (
+                ($verified !== [] && version_compare($version, $installed, '<=')) ||
+                ($bestRank !== null && version_compare($version, $bestRank, '<'))
+            ) {
                 break;
+            }
+            if (isset($verified[$tag])) {
+                continue;
+            }
+            if (microtime(true) >= $this->deadline) {
+                throw new RuntimeException('CMS release check time budget exceeded.');
             }
             try {
                 $result = $this->release($release);
-                if ($alpha) {
-                    $verified[] = $result;
-                    if ($result['channel'] === 'alpha') {
-                        break;
+                $verified[$tag] = $result;
+                if ($result['state'] === 'available') {
+                    $rank = $this->rank($result, $alpha);
+                    if ($bestRank === null || version_compare($rank, $bestRank, '>')) {
+                        $bestRank = $rank;
                     }
-
-                    continue;
                 }
-                if ($result['state'] !== 'current') {
-                    return $this->remember($result);
-                }
-                $current ??= $result;
             } catch (Throwable $exception) {
+                if (microtime(true) >= $this->deadline) {
+                    throw $exception;
+                }
                 $failure ??= $exception;
                 report($exception);
             }
         }
-        if ($alpha && ($selected = $this->select($verified)) !== null) {
-            return $this->remember($selected);
-        }
-        if ($current !== null) {
-            return $this->remember($current);
-        }
-        if ($failure !== null) {
+        if ($verified === [] && $failure !== null) {
             throw $failure;
         }
 
-        return $this->remember(['state' => 'unpublished', 'checked_at' => now()->toIso8601String()]);
+        return $this->select($verified);
     }
 
     private function select(array $releases): ?array
     {
         $alpha = app(UpdateChannel::class)->current() === 'alpha';
         usort($releases, function ($left, $right) use ($alpha): int {
-            if ($alpha) {
-                $source = version_compare(
-                    $right['build']['version'] ?? $right['version'],
-                    $left['build']['version'] ?? $left['version'],
-                );
-                if ($source !== 0) {
-                    return $source;
-                }
-            }
-
-            return version_compare($right['version'], $left['version']);
+            return version_compare($this->rank($right, $alpha), $this->rank($left, $alpha)) ?:
+                version_compare($right['version'], $left['version']);
         });
+        $blocked = null;
         foreach ($releases as $release) {
-            if ($release['state'] !== 'current') {
-                return $release;
+            if ($release['state'] === 'available') {
+                return $blocked === null
+                    ? $release
+                    : $release + ['blocked' => Arr::only($blocked, ['version', 'channel', 'requirements', 'unmet', 'release_url'])];
+            }
+            if ($release['state'] === 'incompatible') {
+                $blocked ??= $release;
             }
         }
 
-        return $releases[0] ?? null;
+        return $blocked ?? $releases[0] ?? null;
+    }
+
+    private function rank(array $release, bool $alpha): string
+    {
+        return $alpha ? ($release['build']['version'] ?? $release['version']) : $release['version'];
     }
 
     /**
@@ -348,17 +365,22 @@ class GitHubReleaseRepository
         if (($asset['size'] ?? null) !== $archive['size']) {
             throw new RuntimeException('CMS release archive size disagrees with its signed metadata.');
         }
-        $compatible =
-            Semver::satisfies(PHP_VERSION, $manifest['requirements']['php']) &&
-            Semver::satisfies(config('manifest.version'), $manifest['requirements']['cms']);
+        $unmet = [];
+        foreach (['cms' => config('manifest.version'), 'php' => PHP_VERSION] as $requirement => $current) {
+            $required = $manifest['requirements'][$requirement];
+            if (!Semver::satisfies($current, $required)) {
+                $unmet[$requirement] = ['required' => $required, 'current' => $current];
+            }
+        }
         $available = version_compare($version, config('manifest.version'), '>') && ReleaseBuild::allows($manifest);
 
         return [
-            'state' => $available ? ($compatible ? 'available' : 'incompatible') : 'current',
+            'state' => $available ? ($unmet === [] ? 'available' : 'incompatible') : 'current',
             'version' => $version,
             'channel' => $channel,
             'build' => $build,
             'requirements' => $manifest['requirements'],
+            'unmet' => $unmet,
             'archive' => $archive + ['url' => $url],
             'release_url' => 'https://github.com/'.$this->repository().'/releases/tag/'.rawurlencode($release['tag_name']),
             'checked_at' => now()->toIso8601String(),
@@ -538,6 +560,7 @@ class GitHubReleaseRepository
                     config('manifest.version'),
                     config('manifest.release.version'),
                     config('manifest.release.sha'),
+                    PHP_VERSION,
                     app(UpdateChannel::class)->current(),
                     config('manifest.update.signing_key'),
                     app(SigningKeys::class)->publicKey(config('manifest.update.signing_key')),

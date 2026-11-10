@@ -74,6 +74,7 @@ class ViewServiceProvider extends ServiceProvider
                             $canUpdateCms,
                             $canUpdateExtensions,
                             config('manifest.version'),
+                            PHP_VERSION,
                             app(UpdateChannel::class)->current(),
                             app(InstallationReceipts::class)->generation(),
                         ],
