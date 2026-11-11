@@ -12,10 +12,14 @@ class RequireAdminTwoFactor
 {
     public function handle(Request $request, Closure $next): Response
     {
+        return $request->is('admin', 'admin/*') ? $this->enforce($request, $next) : $next($request);
+    }
+
+    public function enforce(Request $request, Closure $next): Response
+    {
         /** @var Settings $settings */
         $settings = app(Settings::class);
         if (
-            $request->is('admin', 'admin/*') &&
             $request->user() &&
             $settings->get('security.admin_two_factor', false) &&
             !$request->user()->two_factor_confirmed_at
