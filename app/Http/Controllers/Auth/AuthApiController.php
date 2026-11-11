@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\ApiProfileBuilding;
 use App\Exceptions\ConfirmationRequired;
 use App\Http\Controllers\Controller;
 use App\Kraft\Auth\ApiChallenges;
@@ -300,6 +301,11 @@ class AuthApiController extends Controller
         }
         if (in_array('games:read', $token->scopes, true)) {
             $profile['games'] = $this->identities($user->id);
+        }
+        $event = new ApiProfileBuilding($user, $token->scopes);
+        event($event);
+        if ($event->extensions !== []) {
+            $profile['extensions'] = $event->extensions;
         }
 
         return $profile;
