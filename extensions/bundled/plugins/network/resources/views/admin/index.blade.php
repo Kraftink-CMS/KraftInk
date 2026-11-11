@@ -6,6 +6,7 @@
     @endphp
     <form data-ajax="true" class="card" method="post" action="{{ route('plugins.network.admin.update') }}">
         @csrf
+        <input type="hidden" data-sensitive-confirmation data-sensitive-password-field="password">
         <div class="card-body">
             <p>{{ __('network::admin.help') }}</p>
             <p>{{ __('network::admin.current_ip', ['ip' => request()->ip()]) }}</p>

@@ -10,9 +10,6 @@ class Configuration
     {
         $path = $this->path();
         if (!is_file($path)) {
-            $path = storage_path('app/network.json');
-        }
-        if (!is_file($path)) {
             return ['mode' => 'cloudflare', 'proxies' => []];
         }
         $data = json_decode(File::get($path), true);

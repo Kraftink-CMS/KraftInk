@@ -9,5 +9,5 @@ Route::prefix('admin/plugins/network')
     ->middleware(['web', 'auth', 'permission:admin.access', 'permission:settings.manage', ExtensionConfiguration::class.':network'])
     ->group(function () {
         Route::get('/', [NetworkController::class, 'index'])->name('index');
-        Route::post('/', [NetworkController::class, 'save'])->name('update');
+        Route::post('/', [NetworkController::class, 'save'])->middleware('throttle:sensitive')->name('update');
     });
