@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Kraft\ContentIcons;
 use App\Kraft\Extensions\ThemeConfiguration;
 use App\Kraft\Extensions\ThemeContext;
 use App\Exceptions\ThemeExceptionHandler;
@@ -22,6 +23,7 @@ class ThemeServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        $this->app->scoped(ContentIcons::class);
         $this->app->scoped(ThemeContext::class);
         $this->app->scoped(ThemeConfiguration::class);
         $this->app->scoped(ThemePreview::class);

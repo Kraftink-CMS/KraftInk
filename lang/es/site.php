@@ -279,7 +279,6 @@ return [
         'link_roles' => 'Roles permitidos',
         'link_roles_help' => 'Déjalo vacío para no exigir ningún rol. El miembro debe tener al menos uno de los roles seleccionados. La restricción de un enlace padre también se aplica a sus enlaces hijos.',
         'link_icon' => 'Icono opcional',
-        'link_icon_help' => 'Introduce el nombre de un icono, como house, controller o people.',
         'edit_link' => 'Editar enlace',
         'add_child' => 'Enlace hijo',
         'submenu' => 'Submenú',

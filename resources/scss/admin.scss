@@ -4,8 +4,14 @@
 @use 'rich-content';
 @use 'tables';
 @use 'media-picker';
+@use 'content-icon';
 @import '../vendor/admin-lte/css/adminlte.css';
 @import 'bootstrap-icons/font/bootstrap-icons.css';
+
+.icon-picker-results {
+    max-height: 14rem;
+    overflow: auto;
+}
 
 .info-box {
     .info-box-icon {

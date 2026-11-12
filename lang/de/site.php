@@ -279,7 +279,6 @@ return [
         'link_roles' => 'Erlaubte Rollen',
         'link_roles_help' => 'Leer lassen, um keine Rolle vorauszusetzen. Ein Mitglied muss mindestens eine ausgewählte Rolle besitzen. Eine Einschränkung des übergeordneten Links gilt auch für untergeordnete Links.',
         'link_icon' => 'Optionales Symbol',
-        'link_icon_help' => 'Gib einen Symbolnamen ein, etwa house, controller oder people.',
         'edit_link' => 'Link bearbeiten',
         'add_child' => 'Untergeordneter Link',
         'submenu' => 'Untermenü',

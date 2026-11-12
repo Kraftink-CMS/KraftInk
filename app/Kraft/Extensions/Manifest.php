@@ -9,7 +9,10 @@ use RuntimeException;
 use KraftManifest;
 use Throwable;
 use App\Kraft\Appearance;
+use App\Kraft\ContentIcons;
 use Composer\Autoload\ClassLoader;
+use JsonException;
+use stdClass;
 
 class Manifest
 {
@@ -181,6 +184,9 @@ class Manifest
             }
         }
         $this->themeNavigation($manifest);
+        if (array_key_exists('icons', $manifest)) {
+            $manifest['icons']['entries'] = $this->themeIcons($manifest, $directory);
+        }
         ThemeEditor::validate($manifest, $directory);
         ThemeTemplates::validateManifest($manifest);
         $this->configurationPath($manifest, $directory);
@@ -216,6 +222,65 @@ class Manifest
                 throw new RuntimeException(__('system.extensions.invalid_manifest'));
             }
         }
+    }
+
+    private function themeIcons(array $manifest, string $directory): array
+    {
+        $library = $manifest['icons'];
+        if (
+            $manifest['type'] !== 'theme' ||
+            ($manifest['target'] ?? null) !== 'site' ||
+            !is_array($library) ||
+            array_diff(array_keys($library), ['id', 'name', 'catalog']) ||
+            !is_string($library['id'] ?? null) ||
+            !ContentIcons::validName($library['id']) ||
+            !is_string($library['name'] ?? null) ||
+            trim($library['name']) === '' ||
+            !is_string($library['catalog'] ?? null)
+        ) {
+            throw new RuntimeException(__('system.extensions.invalid_manifest'));
+        }
+        $catalog = $this->localFile($directory, $library['catalog'], 'json');
+        try {
+            $data = json_decode(file_get_contents($catalog), flags: JSON_THROW_ON_ERROR);
+        } catch (JsonException $error) {
+            throw new RuntimeException(__('system.extensions.invalid_manifest'), previous: $error);
+        }
+        if (!($data instanceof stdClass) || (array) $data === []) {
+            throw new RuntimeException(__('system.extensions.invalid_manifest'));
+        }
+
+        $entries = [];
+        foreach ($data as $name => $icon) {
+            if (
+                !ContentIcons::validName((string) $name) ||
+                !($icon instanceof stdClass) ||
+                array_diff(array_keys((array) $icon), ['name', 'asset']) ||
+                !is_string($icon->name ?? null) ||
+                trim($icon->name) === '' ||
+                !is_string($icon->asset ?? null)
+            ) {
+                throw new RuntimeException(__('system.extensions.invalid_manifest'));
+            }
+            $this->localFile($directory.'/public', $icon->asset, 'svg');
+            $entries[$name] = (array) $icon;
+        }
+
+        return $entries;
+    }
+
+    private function localFile(string $directory, string $file, string $extension): string
+    {
+        if (!preg_match('~^[A-Za-z0-9][A-Za-z0-9_./-]*\.'.preg_quote($extension, '~').'$~D', $file) || str_contains($file, '..')) {
+            throw new RuntimeException(__('system.extensions.invalid_manifest'));
+        }
+        $root = realpath($directory);
+        $path = realpath($directory.'/'.$file);
+        if (!$root || !$path || !str_starts_with($path, $root.DIRECTORY_SEPARATOR) || !is_file($path)) {
+            throw new RuntimeException(__('system.extensions.invalid_manifest'));
+        }
+
+        return $path;
     }
 
     public function configurationPath(array $manifest, string $directory): ?string

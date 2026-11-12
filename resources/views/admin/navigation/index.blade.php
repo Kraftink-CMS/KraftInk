@@ -70,9 +70,7 @@
                                                         <span class="text-body-secondary"
                                                             aria-label="{{ __('site.community.submenu') }}">↳</span>
                                                     @endif
-                                                    @if ($link->icon)
-                                                        <i class="bi bi-{{ $link->icon }}" aria-hidden="true"></i>
-                                                    @endif
+                                                    <x-content-icon :name="$link->icon" />
                                                     <div>
                                                         <strong>{{ $linkLabel }}</strong>
                                                         @if ($link->parent_id && ($parentLink = $links->firstWhere('id', $link->parent_id)))
@@ -312,6 +310,7 @@
                 $editingLink?->roles_restricted ||
                 $errors->has('parent_id') ||
                 $errors->has('permission') ||
+                $errors->has('icon') ||
                 $errors->has('role_ids')) open @endif>
             <summary>{{ __('site.community.link_options') }}</summary>
             <div class="pt-3">
@@ -383,18 +382,8 @@
                     @endif
                 </fieldset>
                 <div class="mb-3">
-                    <label class="form-label"
-                        for="icon_{{ $linkKey }}">{{ __('site.community.link_icon') }}</label>
-                    <div class="input-group">
-                        <span class="input-group-text" aria-hidden="true">bi-</span>
-                        <input class="form-control" id="icon_{{ $linkKey }}" name="icon"
-                            value="{{ old('icon', $editingLink?->icon) }}" maxlength="60" pattern="[a-z][a-z0-9-]*"
-                            placeholder="house">
-                    </div>
-                    <div class="form-text">
-                        {{ __('site.community.link_icon_help') }} <a href="https://icons.getbootstrap.com/"
-                            target="_blank" rel="noopener noreferrer">Bootstrap Icons</a>
-                    </div>
+                    <x-admin::icon-picker id="icon_{{ $linkKey }}" name="icon" :label="__('site.community.link_icon')"
+                        :value="old('icon', $editingLink?->icon)" />
                 </div>
                 <input type="hidden" name="enabled" value="0">
                 <div class="form-check mb-3">

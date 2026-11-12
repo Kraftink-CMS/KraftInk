@@ -4,6 +4,7 @@ namespace App\Kraft\Migration\Adapters\KraftInk;
 
 use App\Models\Imports\ImportCredential;
 use App\Models\Wallet\WalletAccount;
+use App\Kraft\ContentIcons;
 use App\Kraft\Games\GameRegistry;
 use App\Kraft\Migration\CoreMappings as SharedCoreMappings;
 use App\Kraft\Migration\ImportContext;
@@ -318,7 +319,7 @@ final class CoreMappings
                     : 'auth',
                 'permission' => $row['permission'] ?? null,
                 'roles_restricted' => !empty($row['roles_restricted']),
-                'icon' => preg_match('/^[a-z][a-z0-9-]{0,59}$/D', $row['icon'] ?? '') ? $row['icon'] : null,
+                'icon' => ContentIcons::validName($row['icon'] ?? '') ? $row['icon'] : null,
                 'position' => max(0, (int) $row['position']),
                 'enabled' => false,
                 'new_tab' => !empty($row['new_tab']),

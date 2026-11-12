@@ -1,3 +1,5 @@
+import { createContentIcon } from './admin/icon-picker.js';
+
 const initialized = new WeakSet();
 
 export function initRoleAppearance(root = document) {
@@ -29,10 +31,8 @@ export function initRoleAppearance(root = document) {
             badge.style.backgroundColor = background.value;
             badge.style.color = foreground;
             badge.replaceChildren();
-            if (/^[a-z][a-z0-9-]*$/.test(icon.value)) {
-                const symbol = ownerDocument.createElement('i');
-                symbol.className = `bi bi-${icon.value} me-1`;
-                symbol.setAttribute('aria-hidden', 'true');
+            const symbol = createContentIcon(icon, icon.value, 'me-1');
+            if (symbol) {
                 badge.append(symbol);
             }
             badge.append(ownerDocument.createTextNode(name.value.trim() || preview.dataset.placeholder));

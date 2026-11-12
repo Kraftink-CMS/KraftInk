@@ -8,6 +8,7 @@ use App\Models\Imports\ImportCredential;
 use App\Models\Accounts\GameIdentity;
 use App\Models\Wallet\WalletAccount;
 use App\Kraft\Auth\AccountIdentity;
+use App\Kraft\ContentIcons;
 use App\Kraft\Games\GameRegistry;
 use App\Kraft\Games\Transports\TransportRegistry;
 use App\Kraft\Html;
@@ -35,9 +36,7 @@ final class CoreMappings
             'text_color' => is_string($row['text_color'] ?? null) && preg_match('/^#[a-fA-F0-9]{6}$/D', $row['text_color'])
                     ? $row['text_color']
                     : null,
-            'icon' => is_string($row['icon'] ?? null) && preg_match('/^[a-z][a-z0-9-]{0,59}$/D', $row['icon'])
-                    ? $row['icon']
-                    : null,
+            'icon' => is_string($row['icon'] ?? null) && ContentIcons::validName($row['icon']) ? $row['icon'] : null,
             'created_at' => now(),
             'updated_at' => now(),
         ]);

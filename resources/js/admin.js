@@ -11,9 +11,12 @@ import './admin/seo.js';
 import './admin/content-seo.js';
 import './admin/navigation-pagination.js';
 import './admin/market-settings.js';
+import { initIconPicker } from './admin/icon-picker.js';
 import '../vendor/admin-lte/js/adminlte.js';
 
 const initializedControls = new WeakMap();
+
+initIconPicker(document);
 
 function confirmedFetch(form, input, options) {
     return window.KraftConfirmation ? window.KraftConfirmation.fetch(form, input, options) : fetch(input, options);
@@ -975,10 +978,9 @@ function initializeSocialLinks(root = document) {
         const title = form.elements.namedItem('title');
         const icon = form.elements.namedItem('icon');
         const color = form.elements.namedItem('color');
-        const preview = form.querySelector('[data-social-preview]');
+        const preview = form.querySelector('[data-icon-picker-preview]');
         let previous = type.selectedOptions[0]?.dataset;
-        const updatePreview = () => {
-            preview.className = `bi bi-${/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(icon.value) ? icon.value : 'link-45deg'}`;
+        const updatePreviewColor = () => {
             preview.style.color = color.value;
         };
         type.addEventListener('change', () => {
@@ -988,16 +990,16 @@ function initializeSocialLinks(root = document) {
             }
             if (!icon.value || icon.value === previous.socialIcon) {
                 icon.value = selected.socialIcon;
+                icon.dispatchEvent(new Event('input', { bubbles: true }));
             }
             if (!color.value || color.value === previous.socialColor) {
                 color.value = selected.socialColor;
             }
             previous = selected;
-            updatePreview();
+            updatePreviewColor();
         });
-        icon.addEventListener('input', updatePreview);
-        color.addEventListener('input', updatePreview);
-        updatePreview();
+        color.addEventListener('input', updatePreviewColor);
+        updatePreviewColor();
     });
 }
 

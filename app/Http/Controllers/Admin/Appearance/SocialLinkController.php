@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Appearance;
 
 use App\Kraft\System\TableQuery;
 use App\Http\Controllers\Controller;
+use App\Kraft\ContentIcons;
 use App\Kraft\NavigationTargets;
 use App\Kraft\SocialLinks;
 use App\Kraft\TextTranslations;
@@ -41,7 +42,9 @@ class SocialLinkController extends Controller
                 fn ($attribute, $value, $fail) => NavigationTargets::validUrl($value) ?:
                 $fail(__('admin.social.invalid_url')),
             ],
-            'icon' => 'required|string|max:60|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/D',
+            'icon' => [
+                'required', 'string', 'max:'.ContentIcons::MAX_NAME_LENGTH, 'regex:/^'.ContentIcons::NAME_PATTERN.'$/D',
+            ],
             'color' => 'required|string|regex:/^#[0-9a-fA-F]{6}$/D',
             'enabled' => 'required|boolean',
         ] + app(TextTranslations::class)->rules(SocialLinks::TRANSLATION_FIELDS));

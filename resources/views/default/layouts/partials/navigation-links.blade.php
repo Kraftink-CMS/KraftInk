@@ -2,9 +2,7 @@
     @if ($navigationItem['children'])
         <details class="navigation-dropdown">
             <summary @class(['nav-link dropdown-toggle', 'active' => $navigationItem['active'] ?? false])>
-                @if ($navigationItem['icon'] ?? null)
-                    <i class="bi bi-{{ $navigationItem['icon'] }} me-1" aria-hidden="true"></i>
-                @endif
+                <x-content-icon :name="$navigationItem['icon'] ?? null" class="me-1" />
                 {{ $navigationItem['label'] }}
             </summary>
             <div class="navigation-submenu dropdown-menu">
@@ -18,9 +16,7 @@
         <a @class(['nav-link', 'active' => $navigationItem['active'] ?? false]) href="{{ $navigationItem['url'] }}"
             @if ($navigationItem['current'] ?? false) aria-current="page" @endif
             @if ($navigationItem['new_tab']) target="_blank" rel="noopener noreferrer" @endif>
-            @if ($navigationItem['icon'] ?? null)
-                <i class="bi bi-{{ $navigationItem['icon'] }} me-1" aria-hidden="true"></i>
-            @endif
+            <x-content-icon :name="$navigationItem['icon'] ?? null" class="me-1" />
             {{ $navigationItem['label'] }}
         </a>
     @endif

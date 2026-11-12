@@ -279,7 +279,6 @@ return [
         'link_roles' => 'Allowed roles',
         'link_roles_help' => 'Leave empty to require no role. A member must hold at least one selected role. A parent restriction also applies to its child links.',
         'link_icon' => 'Optional icon',
-        'link_icon_help' => 'Enter an icon name, such as house, controller or people.',
         'edit_link' => 'Edit link',
         'add_child' => 'Child link',
         'submenu' => 'Submenu',

@@ -1,0 +1,9 @@
+.content-icon {
+    display: inline-block;
+    flex: none;
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+    background-color: currentColor;
+    mask: var(--content-icon) center / contain no-repeat;
+}

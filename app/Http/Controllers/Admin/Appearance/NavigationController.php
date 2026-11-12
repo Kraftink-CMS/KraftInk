@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Kraft\System\TableQuery;
 use App\Http\Controllers\Controller;
 use App\Kraft\Audit;
+use App\Kraft\ContentIcons;
 use App\Kraft\LocalePolicy;
 use App\Kraft\Navigation;
 use App\Kraft\NavigationTargets;
@@ -105,7 +106,9 @@ class NavigationController extends Controller
                 'required_if:destination_type,route',
                 Rule::in(array_keys(app(NavigationTargets::class)->routes())),
             ],
-            'icon' => 'nullable|string|max:60|regex:/^[a-z][a-z0-9-]*$/D',
+            'icon' => [
+                'nullable', 'string', 'max:'.ContentIcons::MAX_NAME_LENGTH, 'regex:/^'.ContentIcons::NAME_PATTERN.'$/D',
+            ],
             'role_ids' => 'nullable|array|max:200',
             'role_ids.*' => 'integer|distinct|exists:roles,id',
             'parent_id' => 'nullable|integer|exists:navigation_links,id',

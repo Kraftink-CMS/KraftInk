@@ -30,8 +30,7 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center gap-3">
-                                        <i class="bi bi-{{ $link['icon'] }} fs-4" style="color: {{ $link['color'] }}"
-                                            aria-hidden="true"></i>
+                                        <x-content-icon :name="$link['icon']" class="fs-4" :style="'color: '.$link['color']" />
                                         <div>
                                             <strong>{{ $link['title'] }}</strong><small
                                                 class="d-block text-body-secondary text-break">{{ $link['url'] }}</small>
@@ -128,18 +127,8 @@
             </div>
             <div class="row g-3 mb-3">
                 <div class="col-sm-8">
-                    <label class="form-label" for="social-icon">{{ __('admin.social.icon') }}</label>
-                    <div class="input-group">
-                        <span class="input-group-text" aria-hidden="true"><i
-                                class="bi bi-{{ old('icon', $editing['icon'] ?? 'discord') }}" data-social-preview></i></span>
-                        <input class="form-control" id="social-icon" name="icon"
-                            value="{{ old('icon', $editing['icon'] ?? 'discord') }}" required maxlength="60"
-                            pattern="[a-z0-9]+(-[a-z0-9]+)*">
-                    </div>
-                    <div class="form-text">
-                        <a href="https://icons.getbootstrap.com/" target="_blank"
-                            rel="noopener noreferrer">{{ __('admin.social.icons_help') }}</a>
-                    </div>
+                    <x-admin::icon-picker id="social-icon" name="icon" :label="__('admin.social.icon')"
+                        :value="old('icon', $editing['icon'] ?? 'discord')" required />
                 </div>
                 <div class="col-sm-4">
                     <label class="form-label" for="social-color">{{ __('admin.social.color') }}</label>

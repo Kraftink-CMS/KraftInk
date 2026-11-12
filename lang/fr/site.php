@@ -279,7 +279,6 @@ return [
         'link_roles' => 'Rangs autorisés',
         'link_roles_help' => 'Sans sélection, aucun rang n’est imposé. Un membre doit posséder au moins un rang choisi. La restriction du parent s’applique aussi à ses sous-liens.',
         'link_icon' => 'Icône facultative',
-        'link_icon_help' => 'Indiquez le nom d’une icône, par exemple house, controller ou people.',
         'edit_link' => 'Modifier le lien',
         'add_child' => 'Sous-lien',
         'submenu' => 'Sous-menu',

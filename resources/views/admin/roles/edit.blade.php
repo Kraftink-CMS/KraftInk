@@ -89,12 +89,8 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" for="role_icon">{{ __('admin.members.icon') }}</label>
-                        <input class="form-control" id="role_icon" name="icon"
-                            value="{{ old('icon', $editing?->icon) }}" pattern="[a-z][a-z0-9-]*" maxlength="60">
-                        <div class="form-text">
-                            {{ __('admin.members.icon_help') }}
-                        </div>
+                        <x-admin::icon-picker id="role_icon" name="icon" :label="__('admin.members.icon')"
+                            :value="old('icon', $editing?->icon)" />
                     </div>
                     <div class="rounded border p-3 mb-3">
                         <div class="small text-body-secondary mb-2">{{ __('admin.members.role_preview') }}</div>

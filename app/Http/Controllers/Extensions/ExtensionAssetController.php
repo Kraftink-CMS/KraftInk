@@ -30,6 +30,7 @@ class ExtensionAssetController extends Controller
             $extension['assets']['scripts'] ?? [],
             $extension['assets']['images'] ?? [],
             $extension['assets']['fonts'] ?? [],
+            array_column($extension['icons']['entries'] ?? [], 'asset'),
             ThemeEditor::assets($extension),
         );
         $icons = function (array $entries) use (&$icons): array {
@@ -69,13 +70,18 @@ class ExtensionAssetController extends Controller
             abort(404);
         }
 
+        $headers = [
+            'Content-Type' => $type,
+            'X-Content-Type-Options' => 'nosniff',
+            'Cache-Control' => 'public, no-cache',
+        ];
+        if ($type === 'image/svg+xml') {
+            $headers['Content-Security-Policy'] = "default-src 'none'; style-src 'unsafe-inline'; sandbox";
+        }
+
         $response = new BinaryFileResponse(
             $path,
-            headers: [
-                'Content-Type' => $type,
-                'X-Content-Type-Options' => 'nosniff',
-                'Cache-Control' => 'public, no-cache',
-            ],
+            headers: $headers,
             autoEtag: true,
             autoLastModified: false,
         );

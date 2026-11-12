@@ -279,7 +279,6 @@ return [
         'link_roles' => 'Cargos permitidos',
         'link_roles_help' => 'Deixa vazio para não exigir nenhum cargo. O membro tem de ter pelo menos um dos cargos selecionados. A restrição de uma ligação principal também se aplica às ligações subordinadas.',
         'link_icon' => 'Ícone opcional',
-        'link_icon_help' => 'Introduz o nome de um ícone, como house, controller ou people.',
         'edit_link' => 'Editar ligação',
         'add_child' => 'Ligação subordinada',
         'submenu' => 'Submenu',

@@ -11,6 +11,7 @@ use App\Kraft\Audit;
 use App\Kraft\Auth\DefaultRole;
 use App\Kraft\Auth\PermissionCatalog;
 use App\Kraft\Auth\RoleHierarchy;
+use App\Kraft\ContentIcons;
 use App\Kraft\Settings;
 use App\Models\Accounts\Role;
 use Illuminate\Http\RedirectResponse;
@@ -88,7 +89,9 @@ class RoleController extends Controller
             'color' => ['nullable', 'regex:/^#[a-fA-F0-9]{6}$/D'],
             'text_color' => ['nullable', 'regex:/^#[a-fA-F0-9]{6}$/D'],
             'automatic_text_color' => ['sometimes', 'boolean'],
-            'icon' => ['nullable', 'string', 'max:60', 'regex:/^[a-z][a-z0-9-]*$/D'],
+            'icon' => [
+                'nullable', 'string', 'max:'.ContentIcons::MAX_NAME_LENGTH, 'regex:/^'.ContentIcons::NAME_PATTERN.'$/D',
+            ],
         ]);
         if ($data['automatic_text_color'] ?? false) {
             $data['text_color'] = null;
