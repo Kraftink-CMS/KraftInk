@@ -11,12 +11,10 @@ import './admin/seo.js';
 import './admin/content-seo.js';
 import './admin/navigation-pagination.js';
 import './admin/market-settings.js';
-import { initIconPicker } from './admin/icon-picker.js';
+import './admin/icon-picker.js';
 import '../vendor/admin-lte/js/adminlte.js';
 
 const initializedControls = new WeakMap();
-
-initIconPicker(document);
 
 function confirmedFetch(form, input, options) {
     return window.KraftConfirmation ? window.KraftConfirmation.fetch(form, input, options) : fetch(input, options);

@@ -105,7 +105,7 @@ function showPanel(picker, visible) {
     }
 }
 
-export function initIconPicker(document) {
+function initIconPicker(document) {
     document.addEventListener('click', (event) => {
         const picker = event.target.closest(pickerSelector);
         if (!picker) {
@@ -163,4 +163,8 @@ export function initIconPicker(document) {
     document.addEventListener('reset', (event) => {
         setTimeout(() => event.target.querySelectorAll(inputSelector).forEach(updatePreview), 0);
     });
+}
+
+if (typeof document !== 'undefined') {
+    initIconPicker(document);
 }
